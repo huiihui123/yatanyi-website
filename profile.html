@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人中心 - 雅檀怡家私城</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #8B5E3C; --primary-dark: #6B3F23; --secondary: #C67B4B;
+  --accent: #E8C9A0; --bg: #F5F0EB; --white: #fff; --dark: #3E2723;
+  --text: #2C1810; --text-light: #8D6E63; --border: #E0D6CC;
+  --danger: #E53935; --success: #4CAF50; --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Noto Sans SC','Microsoft YaHei',sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+
+.topbar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 40px; height: 56px; display: flex; align-items: center;
+  justify-content: space-between; position: sticky; top: 0; z-index: 100;
+}
+.topbar .logo { font-size: 1.2rem; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.topbar .links { display: flex; gap: 24px; align-items: center; }
+.topbar .links a { color: var(--text-light); text-decoration: none; font-size: 0.9rem; }
+.topbar .links a:hover,.topbar .links span:hover { color: var(--primary); }
+.topbar .links span { cursor: pointer; }
+
+.main { max-width: 1100px; margin: 0 auto; padding: 32px 20px; display: grid; grid-template-columns: 280px 1fr; gap: 28px; }
+
+/* 左侧菜单 */
+.sidebar { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06); height: fit-content; position: sticky; top: 80px; }
+.sidebar .user-card { padding: 28px 20px; text-align: center; border-bottom: 1px solid var(--border); }
+.sidebar .user-card .avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 12px; }
+.sidebar .user-card .avatar-placeholder { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+.sidebar .user-card h3 { font-size: 1.1rem; color: var(--dark); margin-bottom: 4px; }
+.sidebar .user-card p { font-size: 0.8rem; color: var(--text-light); }
+.sidebar-nav { padding: 8px 0; }
+.sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 14px 24px; color: var(--text); text-decoration: none; font-size: 0.95rem; transition: all 0.2s; }
+.sidebar-nav a:hover, .sidebar-nav a.active { background: #FDF8F0; color: var(--primary); font-weight: 600; }
+.sidebar-nav a i { width: 20px; text-align: center; font-size: 1.1rem; }
+
+/* 右侧内容 */
+.content { background: var(--white); border-radius: var(--radius); box-shadow: 0 2px 16px rgba(0,0,0,0.06); padding: 32px; }
+.content h2 { font-size: 1.3rem; color: var(--dark); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--accent); display: flex; align-items: center; gap: 10px; }
+
+/* 表单 */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 0.85rem; color: var(--text-light); font-weight: 500; }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 0.95rem; font-family: inherit; transition: border 0.2s; outline: none;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.btn { padding: 12px 32px; border: none; border-radius: 30px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-danger { background: var(--white); color: var(--danger); border: 1px solid var(--danger); }
+.btn-danger:hover { background: var(--danger); color: white; }
+
+/* 订单列表 */
+.order-card { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.order-header { display: flex; justify-content: space-between; padding: 14px 20px; background: #FAF7F2; font-size: 0.85rem; color: var(--text-light); border-bottom: 1px solid var(--border); }
+.order-body { padding: 16px 20px; }
+.order-items { display: flex; flex-wrap: wrap; gap: 12px; }
+.order-item { display: flex; align-items: center; gap: 10px; background: #FDF8F0; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; }
+.order-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.order-total { font-weight: 700; color: var(--danger); font-size: 1rem; }
+.status-tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.st-pending { background: #FFF3E0; color: #E65100; }
+.st-completed { background: #E8F5E9; color: #2E7D32; }
+.empty { text-align: center; padding: 60px 20px; color: var(--text-light); }
+.empty i { font-size: 3rem; margin-bottom: 16px; display: block; color: #ccc; }
+.toast { position: fixed; top: 20px; right: 20px; background: var(--dark); color: white; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; z-index: 9999; display: none; }
+.toast.show { display: block; }
+
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .form-grid { grid-template-columns: 1fr; }
+  .topbar { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/index.html" class="logo"><i class="fas fa-couch"></i> 雅檀怡家私城</a>
+  <div class="links">
+    <a href="/index.html"><i class="fas fa-home"></i> 首页</a>
+    <a href="/cart.html"><i class="fas fa-shopping-cart"></i> 购物车</a>
+    <span onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> 退出</span>
+  </div>
+</div>
+
+<div class="main">
+  <!-- 左侧菜单 -->
+  <aside class="sidebar">
+    <div class="user-card">
+      <div id="sidebarAvatar"></div>
+      <h3 id="sidebarName"></h3>
+      <p id="sidebarSig"></p>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="active" onclick="switchSection('profile')"><i class="fas fa-user-edit"></i> 个人信息</a>
+      <a href="#" onclick="switchSection('orders')"><i class="fas fa-clipboard-list"></i> 我的订单</a>
+      <a href="#" onclick="switchSection('security')"><i class="fas fa-shield-alt"></i> 账户安全</a>
+      <a href="/cart.html"><i class="fas fa-shopping-cart"></i> 购物车</a>
+    </nav>
+  </aside>
+
+  <!-- 右侧内容 -->
+  <div class="content" id="contentArea"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:5000/api';
+let currentUser = JSON.parse(localStorage.getItem('yatan_user') || 'null');
+if (!currentUser) { location.href = '/index.html'; }
+
+function $(s){return document.querySelector(s);}
+function showToast(m){let t=$('#toast');t.textContent=m;t.className='toast show';setTimeout(()=>t.classList.remove('show'),2000);}
+
+function updateSidebar() {
+  let av = currentUser.avatar ? `<img src="${currentUser.avatar}" class="avatar" onerror="this.style.display='none'">` 
+    : `<div class="avatar-placeholder">${(currentUser.nickname||currentUser.username)[0]}</div>`;
+  $('#sidebarAvatar').innerHTML = av;
+  $('#sidebarName').textContent = currentUser.nickname || currentUser.username;
+  $('#sidebarSig').textContent = currentUser.signature || '还没有签名~';
+}
+
+function switchSection(s) {
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+  event.target.classList.add('active');
+  if (s==='profile') renderProfile();
+  else if (s==='orders') renderOrders();
+  else if (s==='security') renderSecurity();
+}
+
+async function renderProfile() {
+  try {
+    let r = await fetch(API + '/user/profile?user_id=' + currentUser.id);
+    let d = await r.json();
+    if (!d.success) { $('#contentArea').innerHTML='<div class="empty">加载失败</div>'; return; }
+    let u = d.user;
+    $('#contentArea').innerHTML = `
+      <h2><i class="fas fa-user-edit" style="color:var(--primary);"></i> 个人信息</h2>
+      <div class="form-grid">
+        <div class="form-group"><label>头像URL</label><input id="pfAvatar" value="${u.avatar||''}" placeholder="输入头像图片链接"></div>
+        <div class="form-group"><label>昵称</label><input id="pfNick" value="${u.nickname||''}"></div>
+        <div class="form-group"><label>性别</label><select id="pfGender"><option value="" ${!u.gender?'selected':''}>保密</option><option value="男" ${u.gender==='男'?'selected':''}>男</option><option value="女" ${u.gender==='女'?'selected':''}>女</option></select></div>
+        <div class="form-group"><label>年龄</label><input id="pfAge" type="number" value="${u.age||''}" min="0" max="150"></div>
+        <div class="form-group"><label>手机号</label><input id="pfPhone" value="${u.phone||''}"></div>
+        <div class="form-group"><label>邮箱</label><input id="pfEmail" value="${u.email||''}"></div>
+        <div class="form-group"><label>地区</label><input id="pfRegion" value="${u.region||''}" placeholder="如：南宁"></div>
+        <div class="form-group full"><label>个性签名</label><input id="pfSig" value="${u.signature||''}" placeholder="写一句个性签名..."></div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:24px;">
+        <button class="btn btn-primary" onclick="saveProfile()"><i class="fas fa-save"></i> 保存修改</button>
+      </div>`;
+  } catch(e) { $('#contentArea').innerHTML='<div class="empty">加载失败</div>'; }
+}
+
+async function saveProfile() {
+  let data = {
+    user_id: currentUser.id,
+    avatar: $('#pfAvatar').value, nickname: $('#pfNick').value,
+    gender: $('#pfGender').value, age: $('#pfAge').value,
+    phone: $('#pfPhone').value, email: $('#pfEmail').value,
+    region: $('#pfRegion').value, signature: $('#pfSig').value
+  };
+  let r = await fetch(API + '/user/profile', {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+  let d = await r.json();
+  if (d.success) {
+    Object.assign(currentUser, data);
+    localStorage.setItem('yatan_user', JSON.stringify(currentUser));
+    updateSidebar();
+    showToast('✅ 保存成功');
+  } else { alert(d.message); }
+}
+
+async function renderOrders() {
+  $('#contentArea').innerHTML = '<h2><i class="fas fa-clipboard-list" style="color:var(--primary);"></i> 我的订单</h2><div style="text-align:center;padding:40px;">加载中...</div>';
+  try {
+    let r = await fetch(API + '/orders?user_id=' + currentUser.id);
+    let d = await r.json();
+    if (!d.orders.length) {
+      $('#contentArea').innerHTML = '<h2><i class="fas fa-clipboard-list" style="color:var(--primary);"></i> 我的订单</h2><div class="empty"><i class="fas fa-inbox"></i>暂无订单<p style="margin-top:12px;"><a href="/index.html#products" style="color:var(--primary);">去逛逛</a></p></div>';
+      return;
+    }
+    let sm = {pending:'⏳待确认', confirmed:'✅已确认', shipped:'🚚已发货', completed:'✔已完成'};
+    let html = '<h2><i class="fas fa-clipboard-list" style="color:var(--primary);"></i> 我的订单</h2>';
+    d.orders.forEach(o => {
+      let items = typeof o.items_json==='string' ? JSON.parse(o.items_json) : o.items_json;
+      html += `<div class="order-card">
+        <div class="order-header"><span>订单号：#${o.id}</span><span>${(o.created_at||'').substring(0,16)}</span></div>
+        <div class="order-body"><div class="order-items">${items.map(i=>`<div class="order-item">${i.product_name} ×${i.quantity}</div>`).join('')}</div></div>
+        <div class="order-footer"><span class="status-tag ${o.status==='pending'?'st-pending':'st-completed'}">${sm[o.status]||o.status}</span><span class="order-total">合计：¥${o.total_amount.toLocaleString()}</span></div>
+      </div>`;
+    });
+    $('#contentArea').innerHTML = html;
+  } catch(e) { $('#contentArea').innerHTML = '<h2>我的订单</h2><div class="empty">加载失败</div>'; }
+}
+
+function renderSecurity() {
+  $('#contentArea').innerHTML = `
+    <h2><i class="fas fa-shield-alt" style="color:var(--primary);"></i> 账户安全</h2>
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:400px;">
+      <div style="padding:16px;background:#FAF7F2;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>用户名</strong><p style="color:var(--text-light);font-size:0.85rem;">${currentUser.username}</p></div>
+      </div>
+      <div style="padding:16px;background:#FAF7F2;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>手机号</strong><p style="color:var(--text-light);font-size:0.85rem;">${currentUser.phone||'未绑定'}</p></div>
+      </div>
+      <hr style="border-color:var(--border);">
+      <button class="btn btn-danger" onclick="deleteAccount()"><i class="fas fa-exclamation-triangle"></i> 注销账户</button>
+      <p style="font-size:0.8rem;color:var(--text-light);">注销后个人信息将被清除，订单记录保留（匿名化），此操作不可恢复。</p>
+    </div>`;
+}
+
+async function deleteAccount() {
+  if (!confirm('确定要注销账户吗？\n\n个人信息将被清除\n购物车数据清空\n订单记录保留（匿名化）\n\n此操作不可恢复！')) return;
+  let r = await fetch(API + '/user/account?user_id=' + currentUser.id, {method:'DELETE'});
+  let d = await r.json();
+  alert(d.message);
+  localStorage.removeItem('yatan_user');
+  location.href = '/index.html';
+}
+
+function doLogout() {
+  if (confirm('确定退出登录？')) {
+    localStorage.removeItem('yatan_user');
+    location.href = '/index.html';
+  }
+}
+
+updateSidebar();
+renderProfile();
+</script>
+</body>
+</html>

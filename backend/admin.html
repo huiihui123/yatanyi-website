@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雅檀怡家私城 - 数据管理中心</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #8B5E3C; --primary-dark: #6B3F23; --secondary: #C67B4B;
+  --accent: #E8C9A0; --accent-light: #F5E6D3; --light: #FDF8F0;
+  --dark: #3E2723; --text: #2C1810; --text-light: #8D6E63;
+  --border: #D7CCC8; --shadow: 0 2px 12px rgba(62,39,35,0.08);
+  --radius: 10px; --transition: all 0.25s;
+  --pending: #FF9800; --contacted: #2196F3; --completed: #4CAF50; --danger: #E53935;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans SC','Microsoft YaHei',sans-serif; background:#F5F0EB; color:var(--text); min-height:100vh; }
+.topbar { background:white; border-bottom:1px solid var(--border); padding:0 32px; height:64px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 1px 8px rgba(0,0,0,0.04); position:sticky; top:0; z-index:100; }
+.topbar .brand { display:flex; align-items:center; gap:12px; font-size:1.2rem; font-weight:700; color:var(--dark); }
+.topbar .brand i { color:var(--primary); }
+.topbar .links { display:flex; gap:16px; align-items:center; }
+.tab-nav { display:flex; gap:0; margin-bottom:24px; border-bottom:2px solid var(--border); }
+.tab-nav button { padding:12px 28px; border:none; background:transparent; cursor:pointer; font-size:1rem; color:var(--text-light); border-bottom:3px solid transparent; margin-bottom:-2px; transition:var(--transition); font-weight:500; }
+.tab-nav button.active { color:var(--primary); border-bottom-color:var(--primary); }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:28px; }
+.stat-card { background:white; border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); display:flex; align-items:center; gap:14px; }
+.stat-card .stat-icon { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+.stat-card .stat-num { font-size:1.8rem; font-weight:700; color:var(--dark); }
+.stat-card .stat-label { font-size:0.8rem; color:var(--text-light); }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:6px; border:none; font-size:0.85rem; cursor:pointer; transition:var(--transition); }
+.btn-primary { background:var(--primary); color:white; }
+.btn-sm { padding:5px 12px; font-size:0.8rem; }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+.btn-outline:hover, .btn-outline.active-filter { background:var(--primary); color:white; border-color:var(--primary); }
+.btn-success { background:#E8F5E9; color:#2E7D32; }
+.btn-info { background:#E3F2FD; color:#1565C0; }
+.btn-warn { background:#FFF3E0; color:#E65100; }
+.btn-danger { background:#FFEBEE; color:#C62828; }
+.panel { background:white; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:24px; overflow:hidden; }
+.panel-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); }
+.panel-header h2 { font-size:1.1rem; color:var(--dark); display:flex; align-items:center; gap:8px; }
+.panel-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+th { text-align:left; padding:12px 14px; background:var(--accent-light); color:var(--dark); font-weight:600; font-size:0.75rem; text-transform:uppercase; white-space:nowrap; }
+td { padding:11px 14px; border-bottom:1px solid #F0EBE6; }
+tr:hover td { background:#FDFAF5; }
+.status-badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; white-space:nowrap; }
+.status-pending { background:#FFF3E0; color:#E65100; }
+.status-contacted { background:#E3F2FD; color:#1565C0; }
+.status-completed { background:#E8F5E9; color:#2E7D32; }
+.pagination { display:flex; align-items:center; justify-content:center; gap:4px; padding:16px; border-top:1px solid var(--border); }
+.pagination button { width:34px; height:34px; border:1px solid var(--border); background:white; border-radius:6px; cursor:pointer; font-size:0.8rem; }
+.pagination button.active-page { background:var(--primary); color:white; border-color:var(--primary); }
+.pagination button:disabled { opacity:0.4; }
+.loading,.empty { text-align:center; padding:40px; color:var(--text-light); }
+.main { max-width:1400px; margin:0 auto; padding:24px 32px; }
+.toast { position:fixed; top:20px; right:20px; background:var(--dark); color:white; padding:12px 20px; border-radius:8px; font-size:0.85rem; z-index:9999; display:none; }
+.toast.show { display:block; }
+.toast.success { background:#2E7D32; }
+.toast.error { background:#C62828; }
+.modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9998; display:none; align-items:center; justify-content:center; }
+.modal-overlay.show { display:flex; }
+.modal-box { background:white; border-radius:var(--radius); padding:28px; max-width:460px; width:90%; text-align:center; }
+
+/* ═══ 移动端适配 ═══ */
+@media (max-width: 992px) {
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  .tab-nav button { padding: 10px 18px; font-size: 0.9rem; }
+}
+@media (max-width: 768px) {
+  .topbar { padding: 0 16px; height: 56px; }
+  .topbar .brand { font-size: 1rem; }
+  .topbar .links { gap: 8px; }
+  .topbar .links a, .topbar .links .btn { font-size: 0.75rem; padding: 5px 10px; }
+  .main { padding: 16px 12px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-card { padding: 14px; gap: 10px; }
+  .stat-card .stat-num { font-size: 1.4rem; }
+  .stat-card .stat-icon { width: 36px; height: 36px; font-size: 1rem; }
+  .tab-nav { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  .tab-nav button { padding: 10px 14px; font-size: 0.82rem; white-space: nowrap; }
+  .panel-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .panel-actions { flex-wrap: nowrap; overflow-x: auto; width: 100%; padding-bottom: 4px; }
+  .panel-actions .btn { white-space: nowrap; flex-shrink: 0; }
+  th, td { padding: 8px 10px; font-size: 0.78rem; }
+  table { font-size: 0.8rem; }
+  .status-badge { padding: 2px 8px; font-size: 0.7rem; }
+}
+@media (max-width: 480px) {
+  .topbar { flex-wrap: wrap; height: auto; padding: 10px 12px; gap: 8px; }
+  .topbar .brand { font-size: 0.9rem; width: 100%; }
+  .topbar .links { width: 100%; justify-content: space-between; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 10px; gap: 8px; }
+  .stat-card .stat-num { font-size: 1.2rem; }
+  .stat-card .stat-label { font-size: 0.7rem; }
+  .tab-nav button { padding: 8px 10px; font-size: 0.75rem; }
+  th, td { padding: 6px 8px; font-size: 0.72rem; }
+  .btn-sm { padding: 4px 8px; font-size: 0.7rem; }
+  .pagination button { width: 28px; height: 28px; font-size: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><i class="fas fa-couch"></i> 雅檀怡家私城 · 数据管理中心</div>
+  <div class="links">
+    <span id="serverStatus" style="color:var(--text-light);font-size:0.85rem;">连接中...</span>
+    <a href="/index.html" target="_blank" class="btn btn-sm btn-outline"><i class="fas fa-external-link-alt"></i> 前台</a>
+    <button class="btn btn-sm btn-outline" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> 刷新</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- 统计看板 -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-icon" style="background:var(--accent-light);color:var(--primary);"><i class="fas fa-clipboard-list"></i></div><div class="stat-info"><div class="stat-num" id="statTotal">--</div><div class="stat-label">总咨询数</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:#FFF3E0;color:var(--pending);"><i class="fas fa-clock"></i></div><div class="stat-info"><div class="stat-num" id="statPending">--</div><div class="stat-label">待处理</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:#F3E5F5;color:#9C27B0;"><i class="fas fa-calendar-day"></i></div><div class="stat-info"><div class="stat-num" id="statToday">--</div><div class="stat-label">今日新增</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:#E8F5E9;color:var(--completed);"><i class="fas fa-users"></i></div><div class="stat-info"><div class="stat-num" id="statUsers">--</div><div class="stat-label">注册用户</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:#FFF8E1;color:var(--secondary);"><i class="fas fa-shopping-bag"></i></div><div class="stat-info"><div class="stat-num" id="statOrders">--</div><div class="stat-label">总订单</div></div></div>
+  </div>
+
+  <!-- 选项卡切换 -->
+  <div class="tab-nav">
+    <button class="active" onclick="switchTab('consult')">📋 预约记录</button>
+    <button onclick="switchTab('subscription')">📧 订阅记录</button>
+    <button onclick="switchTab('users')">👥 用户管理</button>
+    <button onclick="switchTab('orders')">📦 订单管理</button>
+  </div>
+
+  <!-- 预约记录 -->
+  <div class="tab-panel active" id="tab-consult">
+    <div class="panel">
+      <div class="panel-header"><h2><i class="fas fa-list-ul"></i> 客户预约 <span id="consultCount" style="font-weight:400;color:var(--text-light);font-size:0.85rem;"></span></h2>
+        <div class="panel-actions">
+          <button class="btn btn-outline active-filter" onclick="filterConsult('')">全部</button>
+          <button class="btn btn-outline" onclick="filterConsult('pending')">待处理</button>
+          <button class="btn btn-outline" onclick="filterConsult('contacted')">已联系</button>
+          <button class="btn btn-outline" onclick="filterConsult('completed')">已完成</button>
+        </div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>姓名</th><th>电话</th><th>邮箱</th><th>类型</th><th>描述</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody id="consultBody"></tbody></table></div>
+      <div class="pagination" id="consultPager"></div>
+    </div>
+  </div>
+
+  <!-- 订阅记录 -->
+  <div class="tab-panel" id="tab-subscription">
+    <div class="panel">
+      <div class="panel-header"><h2><i class="fas fa-newspaper"></i> 订阅记录 <span id="subCount" style="font-weight:400;color:var(--text-light);font-size:0.85rem;"></span></h2></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>邮箱</th><th>时间</th><th>操作</th></tr></thead><tbody id="subBody"></tbody></table></div>
+      <div class="pagination" id="subPager"></div>
+    </div>
+  </div>
+
+  <!-- 用户管理 -->
+  <div class="tab-panel" id="tab-users">
+    <div class="panel">
+      <div class="panel-header"><h2><i class="fas fa-users"></i> 注册用户 <span id="userCount" style="font-weight:400;color:var(--text-light);font-size:0.85rem;"></span></h2></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>用户名</th><th>昵称</th><th>手机号</th><th>邮箱</th><th>性别</th><th>年龄</th><th>地区</th><th>签名</th><th>注册时间</th></tr></thead><tbody id="userBody"></tbody></table></div>
+      <div class="pagination" id="userPager"></div>
+    </div>
+  </div>
+
+  <!-- 订单管理 -->
+  <div class="tab-panel" id="tab-orders">
+    <div class="panel">
+      <div class="panel-header"><h2><i class="fas fa-shopping-bag"></i> 订单管理 <span id="orderCount" style="font-weight:400;color:var(--text-light);font-size:0.85rem;"></span></h2></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>用户</th><th>商品</th><th>金额</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody id="orderBody"></tbody></table></div>
+      <div class="pagination" id="orderPager"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="deleteModal"><div class="modal-box"><h3>确认删除</h3><p id="deleteMsg"></p><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-sm" style="background:#E53935;color:white;" id="confirmDeleteBtn">确认</button></div></div></div>
+
+<script>
+const API='/api', AA='/api/admin';
+let currentTab='consult', consultFilter='', consultPage=1, subPage=1, userPage=1, orderPage=1, pendingDel=null;
+
+function $(s){return document.querySelector(s);}
+function $$(s){return document.querySelectorAll(s);}
+function showToast(m,t){let e=$('#toast');e.textContent=m;e.className='toast show '+(t||'');setTimeout(()=>e.classList.remove('show'),2500);}
+function confirmD(m,f){$('#deleteMsg').textContent=m;$('#deleteModal').classList.add('show');pendingDel=f;}
+function closeModal(){$('#deleteModal').classList.remove('show');pendingDel=null;}
+$('#confirmDeleteBtn').addEventListener('click',()=>{if(pendingDel){pendingDel();closeModal();}});
+
+async function chk(){try{let r=await fetch(API+'/health'),d=await r.json();$('#serverStatus').innerHTML='🟢 '+d.status;}catch(e){$('#serverStatus').innerHTML='🔴 离线';}}
+
+async function loadStats(){
+  try{let r=await fetch(API+'/stats'),d=await r.json();
+    if(d.success){let x=d.data;$('#statTotal').textContent=x.total_consult;$('#statPending').textContent=x.pending;$('#statToday').textContent=x.today_new;}
+    r=await fetch(AA+'/users');d=await r.json();if(d.success)$('#statUsers').textContent=d.total;
+    r=await fetch(AA+'/orders');d=await r.json();if(d.success)$('#statOrders').textContent=d.total;
+  }catch(e){}
+}
+
+function switchTab(t){
+  currentTab=t;
+  $$('.tab-nav button').forEach(b=>b.classList.remove('active'));
+  $$('.tab-panel').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  $('#tab-'+t).classList.add('active');
+  if(t==='consult') loadConsult();
+  else if(t==='subscription') loadSub();
+  else if(t==='users') loadUsers();
+  else if(t==='orders') loadOrders();
+}
+
+// ---- 预约 ----
+async function loadConsult(p,f){p=p||consultPage;f=f!==undefined?f:consultFilter;consultPage=p;consultFilter=f;
+  let tb=$('#consultBody');tb.innerHTML='<tr><td colspan="9"><div class="loading">加载中...</div></td></tr>';
+  let url=AA+'/consultations?page='+p+'&limit=15'+(f?'&status='+f:'');
+  try{let r=await fetch(url),d=await r.json();
+    if(!d.success){tb.innerHTML='<tr><td colspan="9"><div class="empty">加载失败</div></td></tr>';return;}
+    $('#consultCount').textContent='（共 '+d.total+' 条）';
+    if(!d.data.length){tb.innerHTML='<tr><td colspan="9"><div class="empty">暂无记录</div></td></tr>';$('#consultPager').innerHTML='';return;}
+    let tm={product:'产品',design:'设计',custom:'定制',other:'其他'},sm={pending:'待处理',contacted:'已联系',completed:'已完成'};
+    tb.innerHTML=d.data.map(r=>`<tr><td>#${r.id}</td><td>${e(r.name)}</td><td>${e(r.phone)}</td><td>${e(r.email||'-')}</td><td>${tm[r.consult_type]||r.consult_type||'未指定'}</td><td>${e((r.message||'').substring(0,20))}</td><td><span class="status-badge status-${r.status}">${sm[r.status]||r.status}</span></td><td style="font-size:0.75rem;">${(r.created_at||'').substring(0,16)}</td><td style="white-space:nowrap;">${r.status==='pending'?'<button class="btn btn-sm btn-info" onclick="updSt('+r.id+',\'contacted\')">📞</button> <button class="btn btn-sm btn-success" onclick="updSt('+r.id+',\'completed\')">✓</button>':r.status==='contacted'?'<button class="btn btn-sm btn-success" onclick="updSt('+r.id+',\'completed\')">✓</button> <button class="btn btn-sm btn-warn" onclick="updSt('+r.id+',\'pending\')">↩</button>':'<button class="btn btn-sm btn-warn" onclick="updSt('+r.id+',\'pending\')">↩</button>'} <button class="btn btn-sm btn-danger" onclick="confirmD('删除 #'+${r.id}+'？',()=>delCons(${r.id}))">🗑</button></td></tr>`).join('');
+    let tp=Math.ceil(d.total/d.limit),ph='';if(tp>1){ph+=`<button ${p<=1?'disabled':''} onclick="loadConsult(${p-1})">‹</button>`;for(let i=1;i<=tp;i++)ph+=`<button class="${i===p?'active-page':''}" onclick="loadConsult(${i})">${i}</button>`;ph+=`<button ${p>=tp?'disabled':''} onclick="loadConsult(${p+1})">›</button>`;ph+=`<span style="margin-left:10px;font-size:0.8rem;">${p}/${tp}页</span>`;}$('#consultPager').innerHTML=ph;
+  }catch(e){tb.innerHTML='<tr><td colspan="9"><div class="empty">网络错误</div></td></tr>';}}
+function filterConsult(f){$$('#tab-consult .panel-actions .btn-outline').forEach(b=>b.classList.remove('active-filter'));event.target.classList.add('active-filter');loadConsult(1,f);}
+async function updSt(id,s){try{await fetch(AA+'/consultations/'+id+'/status',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:s})});showToast('已更新','success');loadConsult();loadStats();}catch(e){showToast('失败','error');}}
+async function delCons(id){try{await fetch(AA+'/consultations/'+id,{method:'DELETE'});showToast('已删除','success');loadConsult();loadStats();}catch(e){showToast('失败','error');}}
+
+// ---- 订阅 ----
+async function loadSub(p){p=p||subPage;subPage=p;
+  let tb=$('#subBody');tb.innerHTML='<tr><td colspan="4"><div class="loading">加载中...</div></td></tr>';
+  try{let r=await fetch(AA+'/subscriptions?page='+p+'&limit=15'),d=await r.json();
+    if(!d.success||!d.data.length){tb.innerHTML='<tr><td colspan="4"><div class="empty">'+(d.data&&d.data.length===0?'暂无订阅':'加载失败')+'</div></td></tr>';$('#subPager').innerHTML='';return;}
+    $('#subCount').textContent='（共 '+d.total+' 条）';
+    tb.innerHTML=d.data.map(r=>`<tr><td>#${r.id}</td><td>${e(r.email)}</td><td>${(r.created_at||'').substring(0,16)}</td><td><button class="btn btn-sm btn-danger" onclick="confirmD('删除订阅？',()=>delSub(${r.id}))">🗑</button></td></tr>`).join('');
+    let tp=Math.ceil(d.total/15),ph='';if(tp>1){ph+=`<button ${p<=1?'disabled':''} onclick="loadSub(${p-1})">‹</button>`;for(let i=1;i<=tp;i++)ph+=`<button class="${i===p?'active-page':''}" onclick="loadSub(${i})">${i}</button>`;ph+=`<button ${p>=tp?'disabled':''} onclick="loadSub(${p+1})">›</button>`;}$('#subPager').innerHTML=ph;
+  }catch(e){tb.innerHTML='<tr><td colspan="4"><div class="empty">网络错误</div></td></tr>';}}
+async function delSub(id){try{await fetch(AA+'/subscriptions/'+id,{method:'DELETE'});showToast('已删除','success');loadSub();loadStats();}catch(e){showToast('失败','error');}}
+
+// ---- 用户管理 ----
+async function loadUsers(p){p=p||userPage;userPage=p;
+  let tb=$('#userBody');tb.innerHTML='<tr><td colspan="10"><div class="loading">加载中...</div></td></tr>';
+  try{let r=await fetch(AA+'/users?page='+p+'&limit=15'),d=await r.json();
+    if(!d.success||!d.users.length){tb.innerHTML='<tr><td colspan="10"><div class="empty">暂无用户</div></td></tr>';return;}
+    $('#userCount').textContent='（共 '+d.total+' 人）';
+    tb.innerHTML=d.users.map(u=>`<tr><td>#${u.id}</td><td><strong>${e(u.username)}</strong></td><td>${e(u.nickname||'-')}</td><td>${e(u.phone||'-')}</td><td>${e(u.email||'-')}</td><td>${u.gender||'-'}</td><td>${u.age||'-'}</td><td>${e(u.region||'-')}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${e(u.signature||'-')}</td><td style="font-size:0.75rem;">${(u.created_at||'').substring(0,10)}</td></tr>`).join('');}catch(e){tb.innerHTML='<tr><td colspan="10"><div class="empty">网络错误</div></td></tr>';}}
+
+// ---- 订单管理 ----
+async function loadOrders(p){p=p||orderPage;orderPage=p;
+  let tb=$('#orderBody');tb.innerHTML='<tr><td colspan="7"><div class="loading">加载中...</div></td></tr>';
+  try{let r=await fetch(AA+'/orders'),d=await r.json();
+    if(!d.success||!d.orders.length){tb.innerHTML='<tr><td colspan="7"><div class="empty">暂无订单</div></td></tr>';return;}
+    $('#orderCount').textContent='（共 '+d.total+' 单）';
+    let sm={pending:'⏳待确认',confirmed:'✅已确认',shipped:'🚚已发货',completed:'✔已完成'};
+    tb.innerHTML=d.orders.map(o=>{let items=typeof o.items_json==='string'?JSON.parse(o.items_json):o.items_json;return`<tr><td>#${o.id}</td><td>${e(o.username)}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">${items.map(i=>i.product_name+'×'+i.quantity).join(', ')}</td><td><strong>¥${o.total_amount}</strong></td><td><span class="status-badge status-${o.status==='pending'?'pending':o.status==='confirmed'?'contacted':'completed'}">${sm[o.status]||o.status}</span></td><td style="font-size:0.75rem;">${(o.created_at||'').substring(0,16)}</td><td>${o.xlsx_path?'<a href="'+AA+'/orders/'+o.id+'/xlsx" class="btn btn-sm btn-success">📥 下载</a>':'无文件'}</td></tr>`;}).join('');
+  }catch(e){tb.innerHTML='<tr><td colspan="7"><div class="empty">网络错误</div></td></tr>';}}
+
+function e(s){let d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function refreshAll(){loadStats();if(currentTab==='consult')loadConsult();else if(currentTab==='subscription')loadSub();else if(currentTab==='users')loadUsers();else loadOrders();chk();}
+
+document.addEventListener('DOMContentLoaded',()=>{chk();loadStats();loadConsult();setInterval(loadStats,30000);});
+</script>
+</body>
+</html>

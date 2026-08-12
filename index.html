@@ -1,0 +1,1889 @@
+<!-- 文档类型声明，告诉浏览器这是HTML5文档 -->
+<!DOCTYPE html>
+
+<!-- 文档开始，设置语言为简体中文 -->
+<html lang="zh-CN">
+
+<!-- 头部区域，包含元数据 -->
+<head>
+    <!-- 字符编码设置：UTF-8支持所有中文和特殊字符 -->
+    <meta charset="UTF-8">
+    
+    <!-- 视口设置：确保网页在移动设备上正确显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--防止 XSS：开启 CSP 策略（限制资源加载），输入内容过滤  -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.example.com;"> -->
+    
+    <!-- 网页标题，显示在浏览器标签页上 -->
+    <title>雅檀怡家私城 - 高端环保实木家具</title>
+    
+    <!-- 引入Font Awesome图标库，版本6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 引入Google字体：Noto Sans SC（思源黑体） -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/c/font_5150881_fp4ydmfubz7.css"></link>
+
+    <!-- 引入自定义CSS文件 -->
+    <link rel="stylesheet" type="text/css" href="CSS.css">
+    <link rel="stylesheet" type="text/css" href="footer.css">
+    <link rel="stylesheet" type="text/css" href="media.css">
+    <link rel="stylesheet" type="text/css" href="hero.css">
+    <link rel="stylesheet" type="text/css" href="header.css"></link>
+    <link rel="stylesheet" type="text/css" href="contact-container.css">
+    <!-- 内部样式表 -->
+    <style>
+        /* 骨架屏动画（用于图片加载占位） */
+        .skeleton__avatar { width: 40px; height: 40px; border-radius: 50%; background: #eee; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+    </style>
+
+
+</head>
+
+<!----------------------------------------------------- 头和身体要分开 ---------------------------------------------------------------------------------------------------------->
+
+<!-- 网页主体内容 -->
+<body>
+    <!-- 网站头部导航区域 -->
+    <header class="header"> <!-- class="header": CSS选择器，对应.header样式 -->
+        
+        <!-- 容器：限制内容宽度并居中 -->
+        <div class="container">
+            
+            <!-- 头部顶部区域（Logo和联系方式） -->
+            <div class="header-top">
+                
+                <!-- Logo区域 -->
+                <div class="logo">
+                    <!-- Logo图片：从Unsplash加载的示例图片 -->
+                    <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" 
+                         alt="雅檀怡家私城logo"> <!-- alt:图片无法加载时显示的替代文本 -->
+                    
+                    <!-- 网站主标题 -->
+                    <h1>欢迎您的光临!!!</h1> <!-- h1:一级标题，一个页面通常只有一个 -->
+                </div>
+                
+                <!-- 联系方式区域 -->
+                <div class="contact-info">
+                    <!-- 电话联系 -->
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i> <!-- Font Awesome电话图标 -->
+                        <span>13481188157</span> <!-- 电话号码 -->
+                    </div>
+                    
+                    <!-- 邮箱联系 -->
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i> <!-- Font Awesome邮箱图标 -->
+                        <span>service@yatanyihome.com</span> <!-- 邮箱地址 -->
+                    </div>
+                    
+                    <!-- 移动端菜单按钮（默认隐藏，小屏幕时显示） -->
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i> <!-- 三条横线的菜单图标 -->
+                    </button>
+                </div>
+            </div>
+
+            <!-- 导航菜单区域 -->
+            <nav class="nav"> <!-- nav:语义化标签，表示导航区域 -->
+                <ul class="nav-menu" id="navMenu"> <!-- ul:无序列表，包含导航项 -->
+                    <!-- 首页导航项 -->
+                    <li><a href="#home" class="nav-link active">首页</a></li> 
+                    <!-- li:列表项
+                        a:超链接
+                        href="#home":链接到页面内的home锚点
+                        class="nav-link":链接样式
+                        class="active":当前激活状态 -->
+                    
+                    <!-- 关于我们导航项 -->
+                    <li><a href="#about" class="nav-link">关于我们</a></li>
+                    
+                    <!-- 我们的优势导航项 -->
+                    <li><a href="#features" class="nav-link">我们的优势</a></li>
+                    
+                    <!-- 产品展示导航项 -->
+                    <li><a href="#products" class="nav-link">产品展示</a></li>
+                    
+                    <!-- 客户评价导航项 -->
+                    <li><a href="#testimonials" class="nav-link">客户评价</a></li>
+                    
+                    <!-- 联系我们导航项 -->
+                    <li><a href="#contact" class="nav-link">联系我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+    <!-- 英雄区域（首页大图区域） -->
+    <section class="hero" id="home"> <!-- section:内容区块，id="home":锚点ID -->
+        <div class="container hero-container"> <!-- 双容器：外层限制宽度，内层弹性布局 -->
+            
+            <!-- 左侧内容区域 -->
+            <div class="hero-content">
+                <!-- 主标题 -->
+                <h1 class="hero-title">雅檀怡·家私城</h1> <!-- 这就是你之前显示不全的标题 -->
+                
+                <!-- 副标题 -->
+                <h2 class="hero-subtitle">打造您的理想家居空间</h2>
+                
+                <!-- 描述列表 -->
+                <div class="hero-description">
+                    <!-- 第一项描述 -->
+                    <p><i class="fas fa-check-circle"></i> 精选100%环保实木材料</p>
+                    
+                    <!-- 第二项描述 -->
+                    <p><i class="fas fa-check-circle"></i> 200+设计师原创作品</p>
+                    
+                    <!-- 第三项描述 -->
+                    <p><i class="fas fa-check-circle"></i> 10年品质保障</p>
+                </div>
+                
+                <!-- 按钮区域 -->
+                <div class="hero-buttons">
+                    <!-- 主要按钮：浏览精选 -->
+                    <a href="#products" class="btn btn-primary">浏览精选 <i class="fas fa-chevron-right"></i></a>
+                    
+                    <!-- 次要按钮：免费设计咨询 -->
+                    <a href="#contact" class="btn btn-secondary">免费设计咨询 <i class="fas fa-phone"></i></a>
+                </div>
+            </div>
+            
+            <!-- 右侧图片轮播区域 -->
+            <div class="hero-image-carousel" id="heroCarousel">
+                <!-- 轮播图片容器 -->
+                <div class="carousel-container">
+                    <!-- 第一张图片 -->
+                    <div class="carousel-slide active">
+                        <img src="images/shafa.jpg" alt="精美沙发">
+                    </div>
+                    <!-- 第二张图片 -->
+                    <div class="carousel-slide">
+                        <img src="images/chuang.jpg" alt="舒适大床">
+                    </div>
+                    <!-- 第三张图片 -->
+                    <div class="carousel-slide">
+                        <img src="images/bbb.jpg" alt="实木家具">
+                    </div>
+                </div>
+                <!-- 轮播指示点 -->
+                <div class="carousel-dots">
+                    <span class="carousel-dot active" data-index="0"></span>
+                    <span class="carousel-dot" data-index="1"></span>
+                    <span class="carousel-dot" data-index="2"></span>
+                </div>
+                <!-- 左右箭头 -->
+                <button class="carousel-btn carousel-prev" aria-label="上一张">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-btn carousel-next" aria-label="下一张">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 特色服务浮动条 -->
+        <div class="hero-features">
+            <div class="container">
+                <!-- 四个特色服务项，使用网格布局 -->
+                <div class="features-container">
+                    <!-- 第一项：全国免费配送 -->
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-truck"></i> <!-- 卡车图标 -->
+                        </div>
+                        <div class="feature-content">
+                            <h3>全国免费配送</h3>
+                            <p>覆盖全国300+城市，专业安装团队</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 第二项：60天无理由退换 -->
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-couch"></i> <!-- 沙发图标 -->
+                        </div>
+                        <div class="feature-content">
+                            <h3>60天无理由退换</h3>
+                            <p>不满意随时退，购物零风险</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 第三项：5年质保服务 -->
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i> <!-- 盾牌图标 -->
+                        </div>
+                        <div class="feature-content">
+                            <h3>5年质保服务</h3>
+                            <p>产品质量保障，售后无忧</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 第四项：终身维护 -->
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-gem"></i> <!-- 宝石图标 -->
+                        </div>
+                        <div class="feature-content">
+                            <h3>终身维护</h3>
+                            <p>提供终身维护保养服务</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 关于我们区域 -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>关于我们</h2>
+                <p>专注实木家具20年，致力于打造环保健康的家居生活</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>雅檀怡家私城的故事</h3>
+                    <p>我们成立于2003年，从一家小型家具作坊发展成为今天拥有2000平方米展厅的知名家具品牌。我们始终坚持使用100%环保实木材料，拒绝使用任何有害化学物质。</p>
+                    <p>我们的设计师团队来自国内外知名设计院校，每年推出50+新款原创设计，满足不同客户的家居需求。</p>
+                    <p>雅檀怡家私城已为超过10,000个家庭提供家具解决方案，客户满意度达98%。</p>
+                </div>
+                <!-- 
+                ========================================
+                关于我们 - 店内环境轮播图（6张）
+                ★ 后期替换方法：把 images/store-1.jpg ~ images/store-6.jpg 
+                  替换成你自己拍的店内实景图片即可
+                ========================================
+                -->
+                <div class="about-image-carousel" id="aboutCarousel">
+                    <!-- 轮播图片容器 -->
+                    <div class="carousel-container">
+                        <!-- 图1：展厅全貌 — 替换：images/你的展厅图1.jpg -->
+                        <div class="carousel-slide active">
+                            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="展厅全貌">
+                        </div>
+                        <!-- 图2：沙发体验区 — 替换：images/你的展厅图2.jpg -->
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="沙发体验区">
+                        </div>
+                        <!-- 图3：卧室家具区 — 替换：images/你的展厅图3.jpg -->
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="卧室家具区">
+                        </div>
+                        <!-- 图4：餐厅展示区 — 替换：images/你的展厅图4.jpg -->
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1617104678098-de229db51175?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="餐厅展示区">
+                        </div>
+                        <!-- 图5：前台接待区 — 替换：images/你的展厅图5.jpg -->
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="前台接待区">
+                        </div>
+                        <!-- 图6：仓储出货区 — 替换：images/你的展厅图6.jpg -->
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="仓储出货区">
+                        </div>
+                    </div>
+                    <!-- 轮播指示点（6个点对应6张图） -->
+                    <div class="carousel-dots">
+                        <span class="carousel-dot active" data-index="0"></span>
+                        <span class="carousel-dot" data-index="1"></span>
+                        <span class="carousel-dot" data-index="2"></span>
+                        <span class="carousel-dot" data-index="3"></span>
+                        <span class="carousel-dot" data-index="4"></span>
+                        <span class="carousel-dot" data-index="5"></span>
+                    </div>
+                    <!-- 左右切换箭头 -->
+                    <button class="carousel-btn carousel-prev" aria-label="上一张">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-btn carousel-next" aria-label="下一张">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 六大特色优势区域 -->
+    <section class="features" id="features">
+        <div class="container">
+        <!-- 区域标题部分 -->
+            <div class="section-title">
+                <h2>我们的六大优势</h2>
+                <p>雅檀怡家私城致力于为客户提供最优质的产品和服务</p>
+            </div>
+            
+        <!-- 优势卡片网格容器 -->
+        <div class="features-grid">
+            <!-- 第一个优势卡片 -->
+            <div class="feature-card">
+                <!-- 图标区域 -->
+                <div class="feature-icon">
+                    <!-- i: Font Awesome图标 -->
+                    <!-- class="fas fa-leaf": 叶子的图标 -->
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <!-- 卡片标题 -->
+                <h3>环保健康材料</h3>
+                <!-- 卡片描述文字 -->
+                <p>精选FSC认证实木，采用E0级环保板材，所有涂料均为水性环保漆，甲醛释放量远低于国家标准，守护家人健康。</p>
+                <!-- 详细特性列表 -->
+                <ul class="feature-details">
+                    <!-- li: 列表项 -->
+                    <li><i class="fas fa-check"></i> 100%实木原料</li>
+                    <li><i class="fas fa-check"></i> 食品级环保漆</li>
+                    <li><i class="fas fa-check"></i> 甲醛释放量≤0.03mg/m³</li>
+                </ul>
+            </div>
+
+                <!-- 第二个优势卡片 -->
+                <div class="feature-card">
+                    <!-- div.feature-icon: 卡片图标容器 -->
+                    <div class="feature-icon">
+                        <!-- i.fas.fa-couch: Font Awesome沙发图标，表示人体工学设计 -->
+                        <i class="fas fa-couch"></i>
+                    </div>
+                    <!-- h3: 卡片标题 -->
+                    <h3>人体工学设计</h3>
+                    <!-- p: 卡片描述文字 -->
+                    <p>与国际知名设计团队合作，结合人体工学原理，打造最适合亚洲人体型的家具，提供极致舒适体验。</p>
+                    <!-- ul.feature-details: 优势详情列表 -->
+                    <ul class="feature-details">
+                        <li><i class="fas fa-check"></i> 专业人体工学设计</li>
+                        <li><i class="fas fa-check"></i> 高密度记忆棉填充</li>
+                        <li><i class="fas fa-check"></i> 可调节功能设计</li>
+                    </ul>
+                </div>
+                
+                <!-- 第三个特色优势卡片 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- i.fas.fa-hands: 双手图标，表示手工制作 -->
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>匠心品质保证</h3>
+                    <p>每件产品都经过128道工序、36项质量检测，采用传统榫卯工艺与现代技术结合，确保卓越品质。</p>
+                    <ul class="feature-details">
+                        <li><i class="fas fa-check"></i> 128道生产工序</li>
+                        <li><i class="fas fa-check"></i> 传统榫卯工艺</li>
+                        <li><i class="fas fa-check"></i> 纯手工打磨抛光</li>
+                    </ul>
+                </div>
+                
+                 <!-- 第四个特色优势卡片 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- i.fas.fa-palette: 调色板图标，表示定制服务 -->
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>专业配送安装</h3>
+                    <p>覆盖全国300+城市的专业物流网络，自有安装团队，提供免费上门测量、配送安装一站式服务。</p>
+                    <ul class="feature-details">
+                        <li><i class="fas fa-check"></i> 全国免费配送</li>
+                        <li><i class="fas fa-check"></i> 专业安装团队</li>
+                        <li><i class="fas fa-check"></i> 72小时极速送达</li>
+                    </ul>
+                </div>
+                
+                <!-- 第五个特色优势卡片 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- i.fas.fa-award: 奖杯图标，表示品质保证 -->
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <h3>无忧售后保障</h3>
+                    <p>提供60天无理由退换货，5年免费质保，终身维护保养服务，24小时客服响应，购物无忧。</p>
+                    <ul class="feature-details">
+                        <li><i class="fas fa-check"></i> 60天无理由退换</li>
+                        <li><i class="fas fa-check"></i> 5年免费质保</li>
+                        <li><i class="fas fa-check"></i> 终身维护服务</li>
+                    </ul>
+                </div>
+                
+                <!-- 第六个特色优势卡片 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>专属定制服务</h3>
+                    <p>200+专业设计师团队，提供一对一免费全屋设计方案，支持个性化尺寸、颜色、材质定制。</p>
+                    <ul class="feature-details">
+                        <li><i class="fas fa-check"></i> 免费上门测量</li>
+                        <li><i class="fas fa-check"></i> 专业安装团队</li>
+                        <li><i class="fas fa-check"></i> 一对一专业咨询</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- .features-grid: 特色优势卡片网格结束 -->
+        </div>
+        <!-- .container: 特色优势区域容器结束 -->
+    </section>
+    <!-- section.features#features: 特色优势区域结束 -->
+
+
+<!-- 产品展示区域 -->
+<section class="products" id="products">
+        <!-- .container: 页面内容容器，设置最大宽度和居中对齐 -->
+        <div class="container">
+            <!-- .section-title: 区域标题容器 -->
+            <div class="section-title">
+                <!-- h2: 区域主标题 -->
+                <h2>精选产品</h2>
+                <!-- p: 区域副标题/描述 -->
+                <p>为您呈现我们的热销家具系列</p>
+            </div>
+
+            <!-- 产品筛选按钮区域 -->
+            <div class="product-filter">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="sofa">沙发系列</button>
+                <button class="filter-btn" data-filter="bed">床具系列</button>
+                <button class="filter-btn" data-filter="table">餐桌系列</button>
+                <button class="filter-btn" data-filter="storage">储物系列</button>
+            </div>
+
+            <!-- 产品展示网格 -->
+            <div class="products-grid">
+                            <!-- ====== 沙发系列（9件） ====== -->
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <div class="product-tag new">热销</div>
+                        <img src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="现代简约布艺沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>现代简约布艺沙发</h3>
+                        <p class="product-desc">进口棉麻面料，高密度海绵填充，L型组合设计</p>
+                        <div class="product-price">
+                            <span class="current-price">¥3,999</span>
+                            <span class="original-price">¥5,299</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(118)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="意式极简真皮沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>意式极简真皮沙发</h3>
+                        <p class="product-desc">头层牛皮，高回弹海绵，极简线条设计</p>
+                        <div class="product-price">
+                            <span class="current-price">¥8,999</span>
+                            <span class="original-price">¥12,800</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(86)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="L型转角科技布沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>L型转角科技布沙发</h3>
+                        <p class="product-desc">科技防水布，可拆洗设计，贵妃位可调</p>
+                        <div class="product-price">
+                            <span class="current-price">¥5,699</span>
+                            <span class="original-price">¥7,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(118)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <div class="product-tag new">新品</div>
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="北欧羽绒填充沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>北欧羽绒填充沙发</h3>
+                        <p class="product-desc">白鹅绒+高弹海绵，原木沙发脚，温馨舒适</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,599</span>
+                            <span class="original-price">¥5,999</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(189)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="新中式实木框架沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>新中式实木框架沙发</h3>
+                        <p class="product-desc">北美白蜡木，榫卯结构，东方美学设计</p>
+                        <div class="product-price">
+                            <span class="current-price">¥6,899</span>
+                            <span class="original-price">¥8,500</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(135)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1540574163026-643ea20ade25?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="美式复古铆钉皮沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>美式复古铆钉皮沙发</h3>
+                        <p class="product-desc">做旧油蜡皮，纯铜铆钉，复古工业风</p>
+                        <div class="product-price">
+                            <span class="current-price">¥9,999</span>
+                            <span class="original-price">¥13,800</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(189)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="日式榻榻米懒人沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>日式榻榻米懒人沙发</h3>
+                        <p class="product-desc">可折叠调节靠背，棉麻面料，随地可躺</p>
+                        <div class="product-price">
+                            <span class="current-price">¥2,399</span>
+                            <span class="original-price">¥3,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(289)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="轻奢天鹅绒弧形沙发">
+                    </div>
+                    <div class="product-info">
+                        <h3>轻奢天鹅绒弧形沙发</h3>
+                        <p class="product-desc">丝绒面料，黄铜沙发脚，弧形优雅造型</p>
+                        <div class="product-price">
+                            <span class="current-price">¥7,299</span>
+                            <span class="original-price">¥9,600</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(289)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="sofa">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="多功能储物沙发床">
+                    </div>
+                    <div class="product-info">
+                        <h3>多功能储物沙发床</h3>
+                        <p class="product-desc">抽拉变床，大容量储物，小户型神器</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,899</span>
+                            <span class="original-price">¥6,300</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(102)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- ====== 床具系列（9件） ====== -->
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1617104678098-de229db51175?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="北欧实木双人床">
+                    </div>
+                    <div class="product-info">
+                        <h3>北欧实木双人床</h3>
+                        <p class="product-desc">北美白橡木，稳固排骨架，简约北欧风</p>
+                        <div class="product-price">
+                            <span class="current-price">¥5,299</span>
+                            <span class="original-price">¥6,599</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(86)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <div class="product-tag new">热销</div>
+                        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="现代简约真皮软床">
+                    </div>
+                    <div class="product-info">
+                        <h3>现代简约真皮软床</h3>
+                        <p class="product-desc">进口头层牛皮靠背，高箱储物，齐边设计</p>
+                        <div class="product-price">
+                            <span class="current-price">¥7,899</span>
+                            <span class="original-price">¥9,800</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(215)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1616627981966-40a5e6a39e9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="新中式胡桃木大床">
+                    </div>
+                    <div class="product-info">
+                        <h3>新中式胡桃木大床</h3>
+                        <p class="product-desc">北美黑胡桃木，传统榫卯，沉稳大气</p>
+                        <div class="product-price">
+                            <span class="current-price">¥8,599</span>
+                            <span class="original-price">¥11,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(156)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <div class="product-tag new">新品</div>
+                        <img src="https://images.unsplash.com/photo-1560185007-cde436f6a4d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="儿童实木上下铺床">
+                    </div>
+                    <div class="product-info">
+                        <h3>儿童实木上下铺床</h3>
+                        <p class="product-desc">进口松木，圆角设计，带滑梯储物梯柜</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,299</span>
+                            <span class="original-price">¥5,600</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(189)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1585412727339-54e4bae3bbf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="轻奢布艺高箱储物床">
+                    </div>
+                    <div class="product-info">
+                        <h3>轻奢布艺高箱储物床</h3>
+                        <p class="product-desc">气压高箱储物，羽绒靠包，温暖舒适</p>
+                        <div class="product-price">
+                            <span class="current-price">¥5,899</span>
+                            <span class="original-price">¥7,500</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(135)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9cca27f?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="美式复古铁艺床">
+                    </div>
+                    <div class="product-info">
+                        <h3>美式复古铁艺床</h3>
+                        <p class="product-desc">锻铁工艺，做旧处理，浪漫复古情怀</p>
+                        <div class="product-price">
+                            <span class="current-price">¥3,699</span>
+                            <span class="original-price">¥4,800</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(256)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="意式极简悬浮床">
+                    </div>
+                    <div class="product-info">
+                        <h3>意式极简悬浮床</h3>
+                        <p class="product-desc">隐形床腿设计，氛围灯带，科技感十足</p>
+                        <div class="product-price">
+                            <span class="current-price">¥9,299</span>
+                            <span class="original-price">¥12,500</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(203)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1598928506311-c55ecc5861c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="日式榻榻米地台床">
+                    </div>
+                    <div class="product-info">
+                        <h3>日式榻榻米地台床</h3>
+                        <p class="product-desc">环保蔺草席面，大容量储物，禅意空间</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,899</span>
+                            <span class="original-price">¥6,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(215)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="bed">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="欧式宫廷实木大床">
+                    </div>
+                    <div class="product-info">
+                        <h3>欧式宫廷实木大床</h3>
+                        <p class="product-desc">实木雕花，手工描金，法式浪漫奢华</p>
+                        <div class="product-price">
+                            <span class="current-price">¥11,999</span>
+                            <span class="original-price">¥15,800</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(189)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- ====== 餐桌系列（9件） ====== -->
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="现代实木餐桌椅套装">
+                    </div>
+                    <div class="product-info">
+                        <h3>现代实木餐桌椅套装</h3>
+                        <p class="product-desc">胡桃木实木材质，一桌四椅，可伸缩设计</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,599</span>
+                            <span class="original-price">¥5,999</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(215)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <div class="product-tag new">热销</div>
+                        <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="岩板伸缩餐桌一桌四椅">
+                    </div>
+                    <div class="product-info">
+                        <h3>岩板伸缩餐桌一桌四椅</h3>
+                        <p class="product-desc">12mm进口岩板，耐刮耐热，秒变圆桌</p>
+                        <div class="product-price">
+                            <span class="current-price">¥3,899</span>
+                            <span class="original-price">¥5,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(256)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1604577885924-005b260ec06f?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="新中式圆桌转盘餐桌">
+                    </div>
+                    <div class="product-info">
+                        <h3>新中式圆桌转盘餐桌</h3>
+                        <p class="product-desc">刺猬紫檀木，手工雕刻转盘，团圆之选</p>
+                        <div class="product-price">
+                            <span class="current-price">¥6,999</span>
+                            <span class="original-price">¥9,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(238)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1602872030219-ad2b9a54315c?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="北欧简约白橡木餐桌">
+                    </div>
+                    <div class="product-info">
+                        <h3>北欧简约白橡木餐桌</h3>
+                        <p class="product-desc">纯白橡木，极简线条，清新自然风格</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,299</span>
+                            <span class="original-price">¥5,600</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(156)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1617806118233-18e1de3e34be?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="轻奢大理石纹餐桌">
+                    </div>
+                    <div class="product-info">
+                        <h3>轻奢大理石纹餐桌</h3>
+                        <p class="product-desc">人造大理石台面，不锈钢镀金桌腿</p>
+                        <div class="product-price">
+                            <span class="current-price">¥5,599</span>
+                            <span class="original-price">¥7,300</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(203)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <div class="product-tag new">新品</div>
+                        <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="折叠多功能餐桌">
+                    </div>
+                    <div class="product-info">
+                        <h3>折叠多功能餐桌</h3>
+                        <p class="product-desc">可折叠收纳，小户型福音，实木多层板</p>
+                        <div class="product-price">
+                            <span class="current-price">¥2,199</span>
+                            <span class="original-price">¥2,900</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(203)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1597072689227-d7d4a0ff8b06?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="意式极简岩板长桌">
+                    </div>
+                    <div class="product-info">
+                        <h3>意式极简岩板长桌</h3>
+                        <p class="product-desc">意大利进口岩板，极窄边框，轻奢质感</p>
+                        <div class="product-price">
+                            <span class="current-price">¥7,899</span>
+                            <span class="original-price">¥10,500</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(86)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="实木吧台桌高脚桌椅">
+                    </div>
+                    <div class="product-info">
+                        <h3>实木吧台桌高脚桌椅</h3>
+                        <p class="product-desc">实木铁艺组合，工业风吧台，两椅套装</p>
+                        <div class="product-price">
+                            <span class="current-price">¥3,599</span>
+                            <span class="original-price">¥4,700</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(86)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="table">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80" alt="欧式雕花实木餐桌">
+                    </div>
+                    <div class="product-info">
+                        <h3>欧式雕花实木餐桌</h3>
+                        <p class="product-desc">实木手工雕花，描金工艺，欧式宫廷风</p>
+                        <div class="product-price">
+                            <span class="current-price">¥8,299</span>
+                            <span class="original-price">¥11,000</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(86)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- ====== 储物系列（9件） ====== -->
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="images\得友\1.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>实木推拉门衣柜</h3>
+                        <p class="product-desc">橡木实木框架，环保板材，大容量储物</p>
+                        <div class="product-price">
+                            <span class="current-price">¥6,999</span>
+                            <span class="original-price">¥8,299</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(238)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <div class="product-tag new">热销</div>
+                        <img src="images\得友\2.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>北欧五斗柜储物柜</h3>
+                        <p class="product-desc">全实木抽屉，金属滑轨，卧室收纳利器</p>
+                        <div class="product-price">
+                            <span class="current-price">¥2,899</span>
+                            <span class="original-price">¥3,600</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(156)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="images\得友\3.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>新中式玄关鞋柜</h3>
+                        <p class="product-desc">实木框架，藤编门板，大容量收纳</p>
+                        <div class="product-price">
+                            <span class="current-price">¥3,499</span>
+                            <span class="original-price">¥4,500</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(86)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="images\得友\4.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>现代简约书柜书架</h3>
+                        <p class="product-desc">多层实木板，开放+封闭组合，自由组合</p>
+                        <div class="product-price">
+                            <span class="current-price">¥3,299</span>
+                            <span class="original-price">¥4,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(256)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="images\得友\5.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>实木餐边柜酒柜</h3>
+                        <p class="product-desc">橡胶木柜体，玻璃柜门，酒杯架设计</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,899</span>
+                            <span class="original-price">¥6,300</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(102)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <div class="product-tag new">新品</div>
+                        <img src="images\得友\6.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>多功能电视柜组合</h3>
+                        <p class="product-desc">可伸缩柜体，线缆管理，客厅C位担当</p>
+                        <div class="product-price">
+                            <span class="current-price">¥3,899</span>
+                            <span class="original-price">¥5,100</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(86)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="images\得友\7.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>轻奢梳妆台斗柜</h3>
+                        <p class="product-desc">LED化妆镜，大容量抽屉，精致女生必备</p>
+                        <div class="product-price">
+                            <span class="current-price">¥4,299</span>
+                            <span class="original-price">¥5,600</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(156)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="images\得友\10.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>实木转角书桌书柜</h3>
+                        <p class="product-desc">L型转角设计，书架一体，空间零浪费</p>
+                        <div class="product-price">
+                            <span class="current-price">¥5,499</span>
+                            <span class="original-price">¥7,200</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span class="rating-count">(189)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="images\得友\9.jpg" alt="得友衣柜">
+                    </div>
+                    <div class="product-info">
+                        <h3>简约茶几储物柜</h3>
+                        <p class="product-desc">实木贴皮，双面抽屉，客厅收纳神器</p>
+                        <div class="product-price">
+                            <span class="current-price">¥2,399</span>
+                            <span class="original-price">¥3,000</span>
+                        </div>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span class="rating-count">(189)</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart"><i class="fas fa-shopping-cart"></i> 加入购物车</button>
+                            <button class="btn-detail">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- .products-grid: 产品展示网格结束 -->
+            </div>
+            
+            <!-- 查看更多产品按钮 -->
+            <div class="product-more">
+                <!-- a.btn: 查看更多按钮，href属性指向产品展示区域 -->
+                <a href="#content" class="btn btn-outline">查看更多产品 <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <!-- .container: 产品展示区域容器结束 -->
+</section>
+
+ <!-- 客户评价区域 -->
+<section class="testimonials" id="testimonials">
+    <!-- .container: 页面内容容器 -->
+    <div class="container">
+        <!-- .section-title: 区域标题容器 -->
+        <div class="section-title">
+            <!-- h2: 区域主标题 -->
+            <h2>客户评价</h2>
+            <!-- p: 区域副标题/描述 -->
+            <p>听听客户对我们的真实评价</p>
+        </div>
+            
+    <!-- 客户评价轮播容器 -->
+    <div class="testimonials-slider">
+        <!-- .slider-container: 轮播容器，包含所有评价卡片 -->
+        <div class="slider-container">
+                            
+
+            <!-- 第一个评价卡片 -->
+            <div class="testimonial-card active">
+                <!-- .testimonial-content: 评价内容区域 -->
+                <div class="testimonial-content">
+                    <!-- .testimonial-text: 评价文字内容 -->
+                    <div class="testimonial-text">
+                        <!-- p: 评价文本 -->
+                        <p>在雅檀怡购买的实木沙发已经使用两年了，质量非常好，没有任何异味。售后安装师傅也很专业，值得推荐！</p>
+                    </div>
+                        <!-- .testimonial-author: 评价者的信息 -->
+                        <div class="testimonial-author">
+                            <!-- .author-info: 作者信息容器 -->
+                            <div class="author-info">
+                                <!-- h4: 作者姓名 -->
+                                <h4>张先生</h4>
+                                <!-- span: 作者身份/位置 -->
+                                <span>上海 · 金融从业者</span>
+                            </div>
+                                <!-- .author-avatar: 作者头像 -->
+                                <div class="author-avatar">
+                                    <!-- img: 作者头像图片 -->
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="张先生头像">
+                                </div>
+                        </div>
+                </div>
+            </div>
+
+            <!-- 第二个评价卡片 -->
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>雅檀怡的家具设计非常现代，完美融入了我们家的装修风格。实木材质环保健康，孩子在新房间也没有任何过敏反应。</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>王女士</h4>
+                            <span>北京 · 设计师</span>
+                        </div>
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="王女士头像">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第三个评价卡片 -->
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>对比了多家家具店，最终选择了雅檀怡。他们的售后服务非常到位，上门安装师傅专业细心，家具质量也远超预期。</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>李先生</h4>
+                            <span>广州 · 企业高管</span>
+                        </div>
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="李先生头像">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第四个评价卡片 -->
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>特别喜欢雅檀怡的定制服务，可以根据我的户型尺寸量身打造。家具不仅美观实用，储物功能也设计得很巧妙。</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>刘小姐</h4>
+                            <span>深圳 · 自媒体人</span>
+                        </div>
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="刘小姐头像">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第五个评价卡片 -->
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>作为环保主义者，我特别关注家具的材料。雅檀怡使用100%环保实木，没有任何刺激性气味，真正做到了绿色家居。</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>陈教授</h4>
+                            <span>南京 · 大学教师</span>
+                        </div>
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/53.jpg" alt="陈教授头像">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第六个评价卡片 -->
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>已经推荐给好几个朋友了！雅檀怡的家具不仅质量过硬，设计感也很强。特别是那款实木餐桌，成了我们家聚会的主角。</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>赵女士</h4>
+                            <span>杭州 · 家庭主妇</span>
+                        </div>
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/62.jpg" alt="赵女士头像">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 轮播导航控制 -->
+            <div class="slider-controls">
+            <!-- button.slider-prev: 上一个评价按钮 -->
+            <button class="slider-prev">
+                <!-- i.fas.fa-chevron-left: 左箭头图标 -->
+                <i class="fas fa-chevron-left"></i>
+            </button>
+                    
+            <!-- 轮播指示点 -->
+            <div class="slider-dots">
+                <!-- span.dot.active: 轮播指示点，active类表示当前激活的指示点 -->
+                <span class="dot active" data-index="0"></span>
+                <!-- span.dot: 轮播指示点 -->
+                <span class="dot" data-index="1"></span>
+                <!-- span.dot: 轮播指示点 -->
+                <span class="dot" data-index="2"></span>                       <!-- span.dot: 轮播指示点 -->
+                <span class="dot" data-index="3"></span>
+                <span class="dot" data-index="4"></span>
+                <span class="dot" data-index="5"></span>
+            </div>
+                    
+            <!-- button.slider-next: 下一个评价按钮 -->
+            <button class="slider-next">
+                <!-- i.fas.fa-chevron-right: 右箭头图标 -->
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            </div>
+            <!-- .slider-controls: 轮播控制结束 -->
+
+        </div>
+        <!-- .testimonials-slider: 客户评价轮播区域结束 -->
+    </div>
+    </div>
+    <!-- .container: 客户评价轮播容器结束 -->
+</section>
+<!-- section.testimonials#testimonials: 客户评价区域结束 -->
+
+                
+<!-- 联系我们区域 -->
+<section class="contact-section" id="contact">
+    <div class="container">
+        <div class="section-title">
+            <h2>联系我们</h2>
+            <p>欢迎随时联系我们，获取免费设计咨询</p>
+        </div>
+            
+            <!-- 左边__联系信息 -->
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>联系信息</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>地址</h4>
+                            <p>南宁市江南区吴圩镇博济街243-3号雅檀怡家私城</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>电话</h4>
+                            <p>15777165360</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>邮箱</h4>
+                            <p>service@yatanhome.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>营业时间</h4>
+                            <p>周一至周日 9:00-21:00</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右边__免费设计咨询 -->
+                <div class="contact-form">
+                    <h3>免费设计咨询</h3>
+                    <form id="consultForm">
+                        <div class="form-group">
+                            <!-- 2. 姓名输入框：限制不超过12字节 -->
+                            <input 
+                              type="text" 
+                              name="username" 
+                              id="username" 
+                              placeholder="请输入您的姓名" 
+                              required
+                              oninput="checkByteLimit(this, 12)"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <!-- 1. 联系电话输入框：只能输11位手机号 -->
+                            <input 
+                              type="tel" 
+                              name="phone" 
+                              id="phone" 
+                              placeholder="请输入您的手机号码" 
+                              maxlength="11" 
+                              pattern="^1[3-9]\d{9}$" 
+                              required
+                              oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <!-- 3. 电子邮箱输入框：限制不超过16字节 -->
+                            <input 
+                              type="email" 
+                              name="email" 
+                              id="email" 
+                              placeholder="请输入您的电子邮箱" 
+                              required
+                              oninput="checkByteLimit(this, 16)"
+                            >
+                        </div>
+                        <!-- 多选框 -->
+                        <div class="form-group">
+                            <!-- 咨询类型下拉框：id 供后端 API 读取 -->
+                            <select id="consultType" required>
+                                <option value="" disabled selected>选择咨询类型</option>
+                                <option value="product">产品咨询</option>
+                                <option value="design">设计咨询</option>
+                                <option value="custom">定制家具</option>
+                                <option value="moving">闲时搬家</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <!-- 文本框（客户需求描述，提交到后端） -->
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="请描述您的需求..." rows="5" required></textarea>
+                        </div>
+                        
+                        <!-- 修复：添加按钮容器并优化按钮样式 -->
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> 提交咨询
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> 重置表单
+                            </button>
+                        </div>
+                    </form>
+                            <!-- 媒体链接方式地址 -->
+                            <div class="social-media-links">
+                                <!-- a: 微信链接__转二维码 -->
+                                <a href="javascript:;" class="social-link" id="wechatBtn" aria-label="微信" title="扫码添加我们微信">
+                                    <!-- i.fab.fa-weixin: 微信图标 -->
+                                    <i class="fab fa-weixin"></i>
+                                </a>
+
+                                <!-- a: 微博链接 -->
+                                <a href="https://weibo.com/u/替换成你的微博ID" 
+                                 class="social-link" 
+                                 target="_blank" 
+                                 rel="noopener noreferrer" 
+                                 aria-label="微博" 
+                                 title="关注我们微博">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                                
+                                <!-- a: 抖音链接 -->
+                                <a href="https://v.douyin.com/替换成你的抖音短链接/" 
+                                     class="social-link" 
+                                     target="_blank" 
+                                     rel="noopener noreferrer" 
+                                     aria-label="抖音" 
+                                     title="关注我们抖音">
+                                    <i class="fab fa-tiktok"></i>
+                                </a>
+
+                                <!-- a: 小红书链接 -->
+                                <a href="https://www.xiaohongshu.com/" 
+                                     class="social-link" 
+                                     target="_blank" 
+                                     rel="https://cn.bing.com/images/search?q=%e5%b0%8f%e7%ba%a2%e4%b9%a6%e5%9b%be%e6%a0%87logo&id=0A280A73EAF3E5661D7E081B717B72BC7DFB413C&FORM=IQFRBA" 
+                                     aria-label="小红书" 
+                                     title="关注我们小红书">
+                                    <i class="iconfont icon-xiaohongshuicon"></i>
+                                </a>
+                                
+                                <!-- a:知乎链接 -->
+                                <a href="https://www.zhihu.com/" 
+                                     class="social-link" 
+                                     target="_blank" 
+                                     rel="noopener noreferrer" 
+                                     aria-label="知乎" 
+                                     title="关注我们知乎">
+                                    <i class="iconfont icon-zhihu"></i>
+                                </a>
+                                
+                                
+                                <!-- 快手链接，直接放到你的社交链接容器里 -->
+                                <a href="https://www.kuaishou.com/" 
+                                   class="social-link social-link-ks" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   aria-label="快手" 
+                                   title="关注我们快手">
+                                    <i class="fas fa-play-circle"></i>
+                                </a>
+
+                                <!-- 京东 -->
+                                <a href="你的京东店铺首页链接" 
+                                   class="social-link social-link" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   aria-label="京东店铺" 
+                                   title="去京东店铺选购">
+                                    <i class="fas fa-shopping-bag"></i>
+                                </a>
+                                 
+                                <!-- 淘宝 -->
+                                <a href="你的淘宝店铺首页链接" 
+                                   class="social-link social-link-taobao" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   aria-label="淘宝店铺" 
+                                   title="去淘宝店铺选购">
+                                    <i class="iconfont icon-Shape"></i>
+                                </a>
+
+
+                                 <!-- 大众点评 -->
+                                <a href="你的大众点评店铺链接" 
+                                   class="social-link" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   aria-label="大众点评" 
+                                   title="查看我们的门店评价">
+                                    <i class="iconfont icon-dazhongdianping"></i>
+                                </a>
+                                
+                                <!--bilibili  -->
+                                <a href="https://www.bilibili.com/" 
+                                   class="social-link social-link-bilibili" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   aria-label="哔哩哔哩" 
+                                   title="关注我们B站">
+                                    <i class="fab fa-bilibili"></i>
+                                </a>
+
+                            <!-- 社交媒体链接结束 -->
+                            </div>
+                </div>
+
+            </div>
+            <!-- .contact-content: 联系内容容器结束 -->
+
+        <!-- 放在联系我们区域最底部添加二维码遮罩 -->
+        <div id="wechatModal" class="wechat-modal">
+          <div class="wechat-qrcode-box">
+            <h3>扫码添加微信</h3>
+            <!-- 添加微信二维码 -->
+            <img src="images\bbb.jpg" alt="微信二维码">
+            <span class="close-modal">×</span>
+          </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- 页脚区域 -->
+    <footer class="footer">
+        <!-- .container: 页面内容容器 -->
+        <div class="container">
+            <!-- .footer-content: 页脚内容容器 -->
+            <div class="footer-content">
+                <!-- .footer-logo: 页脚logo区域 -->
+                <div class="footer-logo">
+                    <!-- img: 页脚logo图片 -->
+                    <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="雅檀怡家私城logo">
+                    <!-- h2: 公司名称 -->
+                    <h2>雅檀怡家私城</h2>
+                    <!-- p: 公司口号 -->
+                    <p class="footer-slogan">匠心打造理想家居 · 专注实木家具20年</p>
+                </div>
+                
+                <!-- .footer-links: 页脚链接区域 -->
+                <div class="footer-links">
+                    <!-- h3: 链接区域标题 -->
+                    <h3>快速链接</h3>
+                    <!-- ul: 无序链接列表 -->
+                    <ul>
+                        <!-- li: 列表项 -->
+                        <!-- a: 链接 -->
+                        <li><a href="#home">首页</a></li>
+                        <li><a href="#products">产品展示</a></li>
+                        <li><a href="#about">关于我们</a></li>
+                        <li><a href="#features">我们的优势</a></li>
+                        <li><a href="#testimonials">客户评价</a></li>
+                        <li><a href="#contact">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <!-- .footer-products: 产品分类区域 -->
+                <div class="footer-products">
+                    <h3>产品分类</h3>
+                    <ul>
+                        <li><a href="#">客厅家具</a></li>
+                        <li><a href="#">卧室家具</a></li>
+                        <li><a href="#">餐厅家具</a></li>
+                        <li><a href="#">书房家具</a></li>
+                        <li><a href="#">定制家具</a></li>
+                        <li><a href="#">新品上市</a></li>
+                    </ul>
+                </div>
+                
+                <!-- .footer-contact: 页脚联系方式区域 -->
+                <div class="footer-contact">
+                    <h3>联系我们</h3>
+                    <!-- .contact-item: 联系方式项 -->
+                    <div class="contact-item">
+                        <!-- i.fas.fa-map-marker-alt: 地址图标 -->
+                        <i class="fas fa-map-marker-alt"></i>
+                        <!-- span: 地址信息 -->
+                        <span>南宁市江南区吴圩镇博济街243-3号</span>
+                    </div>
+                    <div class="contact-item">
+                        <!-- i.fas.fa-phone: 电话图标 -->
+                        <i class="fas fa-phone"></i>
+                        <span>15777165360</span>
+                    </div>
+                    <div class="contact-item">
+                        <!-- i.fas.fa-envelope: 邮箱图标 -->
+                        <i class="fas fa-envelope"></i>
+                        <span>service@yatanhome.com</span>
+                    </div>
+                    <!-- .newsletter: 新闻订阅区域 -->
+                    <div class="newsletter">
+                        <!-- p: 订阅提示文字 -->
+                        <p>订阅我们的最新资讯</p>
+                        <!-- form.footer-form: 订阅表单 -->
+                        <form class="footer-form">
+                            <!-- input: 邮箱输入框，type="email"表示邮箱类型 -->
+                            <input type="email" placeholder="请输入您的邮箱" required>
+                            <!-- button: 订阅按钮，type="submit"表示表单提交 -->
+                            <button type="submit">
+                                <!-- i.fas.fa-paper-plane: 纸飞机图标，表示发送 -->
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- .footer-content: 页脚内容容器结束 -->
+            
+            <!-- .footer-bottom: 页脚底部区域 -->
+            <div class="footer-bottom">
+                <!-- p.copyright: 版权信息 -->
+                <p class="copyright">&copy; 2026 雅檀怡家私城 版权所有. 京ICP备12345678号</p>
+                <!-- .footer-policy: 政策链接 -->
+                <div class="footer-policy">
+                    <!-- a: 隐私政策链接 -->
+                    <a href="#">隐私政策</a>
+                    <!-- span: 分隔符 -->
+                    <span>|</span>
+                    <!-- a: 服务条款链接 -->
+                    <a href="#">服务条款</a>
+                    <span>|</span>
+                    <!-- a: 退换货政策链接 -->
+                    <a href="#">退换货政策</a>
+                </div>
+            </div>
+            <!-- .footer-bottom: 页脚底部区域结束 -->
+        </div>
+        <!-- .container: 页脚区域容器结束 -->
+    </footer>
+    <!-- footer.footer: 页脚区域结束 -->
+
+    <!-- 回到顶部按钮 -->
+    <!-- button#backToTop: 回到顶部按钮，id用于JavaScript控制 -->
+    <button id="backToTop" class="back-to-top">
+        <!-- i.fas.fa-chevron-up: 向上箭头图标 -->
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+<!-- 在body末尾链接JS -->
+<script src="JavaScript.js"></script>
+
+</body>
+</html>

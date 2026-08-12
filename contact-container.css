@@ -1,0 +1,412 @@
+/* ====== 联系我们区域样式 =========================================================================================================================== */
+/* .contact-container: 联系信息和免费咨询容器 */
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: var(--text-color);
+}
+
+.contact-item i {
+    color: var(--primary-color);
+    font-size: 1.4rem !important;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+}
+
+.contact-info {
+    display: grid;
+    gap: 30px;
+}
+
+.contact-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.contact-icon {
+    width: 50px;
+    height: 50px;
+    background-color: var(--light-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.contact-icon i {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.contact-details h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--dark-color);
+}
+
+.contact-details p {
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.contact-form {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.contact-form h3 {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    color: var(--dark-color);
+    text-align: center;
+}
+
+/*表单css修饰*/
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/*表单里的按钮*/
+.form-buttons {          
+  /*margin-top: 28px;   */
+  margin-bottom: 18px; /* 新增：底部留36px空白，拉开和下方链接的距离 */
+  /*justify-content: center; /* 按钮整体居中，美观协调*/
+
+  justify-content: stretch; /* 改这里，撑满整行 */
+  flex-wrap: wrap;  /* 小屏幕自动换行，不会溢出 */
+
+/* 布局：按钮水平排列，自动适配小屏幕 */
+  display: flex;
+  gap: 30px;          /* 两个按钮的间距 */
+  margin-top: 18px;   /* 和上方输入框的留白，不拥挤 */
+
+}
+
+/* 以下是之前的按钮美化样式，保留不动 */
+.form-buttons button {
+  padding: 12px 40px; 
+  border: none;
+  border-radius: 6px; 
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex:1;
+}
+
+.form-buttons button[type="submit"] {
+  background-color: #8B4513;
+  color: #ffffff;
+}
+.form-buttons button[type="submit"]:hover {
+  background-color: #6B3410;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.form-buttons button[type="reset"] {
+  background-color: #D2691E;
+  color: #ffffff;
+}
+.form-buttons button[type="reset"]:hover {
+  background-color: #B35918;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* 点击反馈 */
+.form-buttons button:active {
+  transform: translateY(0);
+}
+
+
+
+/* ====== 社交媒体链接样式优化 ======================================================================================================================= */
+.social-media-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 10px;
+    margin: 0 auto; /* 水平居中 */
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--light-color);
+    color: var(--dark-color);
+    text-decoration: none;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    /* 清除社交链接默认聚焦轮廓 */
+    outline: none !important;
+}
+
+/* 可访问性聚焦阴影 */
+.social-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(180, 50, 180, 0.2);
+}
+
+/* （原代码多余：本来就没左边框，所以删掉这行：border-left: none;） */
+
+.social-link i,
+.social-link svg {
+    position: relative;
+    z-index: 1;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+/* ========== 修复伪元素冲突：重新分配伪元素功能 ========== */
+/* ::before 只做渐变背景（保留你原来的渐变效果，不盖品牌色） */
+.social-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+/* 如果你想要保留每个平台的专属品牌色，把这行注释打开，渐变会半透明叠加在品牌色上 */
+/* .social-link:hover::before {opacity: 0.3;} */
+
+/* ========== 提示框（ tooltip ）用::after，不冲突 ========== */
+.social-link::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--dark-color);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+/* 提示框三角形改画在::after上，不用额外抢伪元素 */
+.social-link::after::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: var(--dark-color);
+}
+/* 修正三角形定位写法（上面的写法不生效，换成这个） */
+.social-link .tooltip-arrow {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: var(--dark-color);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.social-link:hover::after,
+.social-link:hover .tooltip-arrow {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ========== 平台专属hover颜色（修复覆盖问题） ========== */
+
+
+/* 按顺序写10个，顺序对就绝对生效，优先级拉满 */
+.social-media-links .social-link:nth-child(1):hover {background-color: #07C160 !important;}
+.social-media-links .social-link:nth-child(2):hover {background-color: #E6162D !important;}
+.social-media-links .social-link:nth-child(3):hover {background-color: #000000 !important;}
+.social-media-links .social-link:nth-child(4):hover {background-color: #FF0000 !important;}
+.social-media-links .social-link:nth-child(5):hover {background-color: #0084FF !important;}
+.social-media-links .social-link:nth-child(6):hover {background-color: #FF6A00 !important;}
+.social-media-links .social-link:nth-child(7):hover {background-color: #E6162D !important;}
+.social-media-links .social-link:nth-child(8):hover {background-color: #FF7300 !important;}
+.social-media-links .social-link:nth-child(9):hover {background-color: #FF4000 !important;}
+.social-media-links .social-link:nth-child(10):hover {background-color: #FB7299 !important;}
+
+/* 统一修正悬停图标颜色，避免看不清 */
+.social-media-links .social-link:hover i,
+.social-media-links .social-link:hover svg {color: #ffffff !important;}
+
+
+
+/* ========== 原有hover交互，保留不动 ========== */
+.social-link:hover::before {
+    opacity: 0.35; /* 如果你要渐变就改成0.2-0.5，不要渐变就留0 */
+}
+.social-link:hover i {
+    color: white;
+    transform: scale(1.1);
+}
+.social-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+    animation-play-state: paused; /* 悬停停动画，没问题保留 */
+}
+
+/* 响应式设计（没问题，保留） */
+@media screen and (max-width: 768px) {
+    .social-media-links {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding-top: 15px;
+        margin-top: 15px;
+        width: 100%;
+        justify-content: center;
+        order: 3; /* 在移动端调整顺序 */
+    }
+    
+    .contact-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .social-link {
+        width: 42px;
+        height: 42px;
+    }
+    
+    .social-link i,
+    .social-link svg {
+        font-size: 1.2rem;
+    }
+}
+
+/* 动画效果（支持10个图标，没问题保留） */
+@keyframes socialPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(139, 69, 19, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(139, 69, 19, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(139, 69, 19, 0);
+    }
+}
+
+.social-link:nth-child(1) { animation: socialPulse 2s infinite 0.15s; }
+.social-link:nth-child(2) { animation: socialPulse 2s infinite 0.25s; }
+.social-link:nth-child(3) { animation: socialPulse 2s infinite 0.35s; }
+.social-link:nth-child(4) { animation: socialPulse 2s infinite 0.45s; }
+.social-link:nth-child(5) { animation: socialPulse 2s infinite 0.55s; }
+.social-link:nth-child(6) { animation: socialPulse 2s infinite 0.65s; }
+.social-link:nth-child(7) { animation: socialPulse 2s infinite 0.75s; }
+.social-link:nth-child(8) { animation: socialPulse 2s infinite 0.85s; }
+.social-link:nth-child(9) { animation: socialPulse 2s infinite 0.95s; }
+.social-link:nth-child(10) { animation: socialPulse 2s infinite 1.05s; }
+
+
+/* 多余代码：没用的空样式，删掉了，如果之后要用.social-icons再保留就行 */
+
+/* 微信模块 */
+.wechat-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.wechat-modal.show {
+  display: flex;
+}
+.wechat-qrcode-box {
+  position: relative;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+}
+.wechat-qrcode-box img {
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+.wechat-qrcode-box h3 {
+  text-align: center;
+  margin: 0 0 15px;
+  color: #333;
+}
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+.close-modal:hover {
+  color: #000;
+}
+

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的购物车 - 雅檀怡家私城</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #8B5E3C; --primary-dark: #6B3F23; --secondary: #C67B4B;
+  --accent: #E8C9A0; --bg: #F5F0EB; --white: #fff; --dark: #3E2723;
+  --text: #2C1810; --text-light: #8D6E63; --border: #E0D6CC;
+  --danger: #E53935; --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Noto Sans SC','Microsoft YaHei',sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+
+.topbar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 40px; height: 56px; display: flex; align-items: center;
+  justify-content: space-between; position: sticky; top: 0; z-index: 100;
+}
+.topbar .logo { font-size: 1.2rem; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.topbar .logo i { font-size: 1.3rem; }
+.topbar .links { display: flex; gap: 24px; align-items: center; }
+.topbar .links a { color: var(--text-light); text-decoration: none; font-size: 0.9rem; }
+.topbar .links a:hover { color: var(--primary); }
+
+.main { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+.page-title { font-size: 1.6rem; font-weight: 700; color: var(--dark); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+.page-title .count { font-size: 0.9rem; color: var(--text-light); font-weight: 400; }
+
+.cart-table { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+.cart-header { display: grid; grid-template-columns: 50px 2fr 1fr 1fr 1fr 60px; padding: 16px 20px; background: #FAF7F2; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--text-light); font-weight: 600; align-items: center; }
+.cart-item { display: grid; grid-template-columns: 50px 2fr 1fr 1fr 1fr 60px; padding: 20px; border-bottom: 1px solid #F5F0EB; align-items: center; transition: background 0.2s; }
+.cart-item:hover { background: #FDFAF5; }
+.cart-item:last-child { border-bottom: none; }
+.cart-checkbox input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+.cart-product { display: flex; gap: 14px; align-items: center; }
+.cart-product img { width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: #FDF8F0; }
+.cart-product .info h4 { font-size: 0.95rem; color: var(--dark); margin-bottom: 4px; }
+.cart-product .info p { font-size: 0.8rem; color: var(--text-light); }
+.cart-price { font-weight: 600; color: var(--dark); font-size: 0.95rem; }
+.cart-qty { display: flex; align-items: center; gap: 0; }
+.cart-qty button { width: 32px; height: 32px; border: 1px solid var(--border); background: var(--white); cursor: pointer; font-size: 1rem; color: var(--text); transition: all 0.2s; }
+.cart-qty button:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.cart-qty button:first-child { border-radius: 6px 0 0 6px; }
+.cart-qty button:last-child { border-radius: 0 6px 6px 0; }
+.cart-qty span { width: 44px; height: 32px; display: flex; align-items: center; justify-content: center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
+.cart-subtotal { font-weight: 700; color: var(--danger); font-size: 0.95rem; }
+.cart-delete { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1.1rem; transition: color 0.2s; }
+.cart-delete:hover { color: var(--danger); }
+
+.cart-footer { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; background: #FAF7F2; border-top: 1px solid var(--border); }
+.cart-footer .select-all { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-light); }
+.cart-footer .summary { display: flex; align-items: center; gap: 24px; }
+.cart-footer .summary .total-label { font-size: 0.9rem; color: var(--text-light); }
+.cart-footer .summary .total-price { font-size: 1.5rem; font-weight: 700; color: var(--danger); }
+.cart-footer .summary .total-price small { font-size: 0.9rem; }
+.btn-checkout {
+  padding: 14px 48px; background: var(--danger); color: white; border: none;
+  border-radius: 30px; font-size: 1.05rem; font-weight: 600; cursor: pointer;
+  transition: all 0.3s; letter-spacing: 1px;
+}
+.btn-checkout:hover { background: #C62828; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(229,57,53,0.3); }
+.btn-checkout:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.empty-cart { text-align: center; padding: 80px 20px; }
+.empty-cart i { font-size: 5rem; color: #E0D6CC; margin-bottom: 20px; display: block; }
+.empty-cart h3 { font-size: 1.3rem; color: var(--text-light); margin-bottom: 8px; }
+.empty-cart p { color: #bbb; margin-bottom: 24px; }
+.empty-cart a { display: inline-block; padding: 12px 36px; background: var(--primary); color: white; text-decoration: none; border-radius: 30px; font-weight: 600; }
+
+.toast { position: fixed; top: 20px; right: 20px; background: var(--dark); color: white; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; z-index: 9999; display: none; }
+.toast.show { display: block; }
+.toast.success { background: #2E7D32; }
+
+@media (max-width: 768px) {
+  .topbar { padding: 0 16px; }
+  .cart-header { display: none; }
+  .cart-item { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
+  .cart-product img { width: 60px; height: 60px; }
+  .cart-footer { flex-direction: column; gap: 16px; }
+  .btn-checkout { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/index.html" class="logo"><i class="fas fa-couch"></i> 雅檀怡家私城</a>
+  <div class="links">
+    <a href="/index.html"><i class="fas fa-home"></i> 首页</a>
+    <a href="/index.html#products"><i class="fas fa-th"></i> 产品</a>
+    <span id="userLink" style="cursor:pointer;color:var(--text-light);font-size:0.9rem;"></span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-title">
+    <i class="fas fa-shopping-cart" style="color:var(--primary);"></i>
+    我的购物车
+    <span class="count" id="cartCount"></span>
+  </div>
+
+  <div id="cartContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:5000/api';
+let currentUser = JSON.parse(localStorage.getItem('yatan_user') || 'null');
+let cartItems = [];
+
+function $(s) { return document.querySelector(s); }
+function showToast(m) { let t=$('#toast'); t.textContent=m; t.className='toast show success'; setTimeout(()=>t.classList.remove('show'),2000); }
+
+async function loadCart() {
+  if (!currentUser) {
+    $('#cartContent').innerHTML = `<div class="empty-cart">
+      <i class="fas fa-user-lock"></i><h3>请先登录</h3><p>登录后查看购物车</p>
+      <a href="/index.html" onclick="localStorage.setItem('showLogin','1')">去登录</a></div>`;
+    return;
+  }
+  try {
+    let r = await fetch(API + '/cart?user_id=' + currentUser.id);
+    let d = await r.json();
+    cartItems = d.items || [];
+    renderCart();
+  } catch(e) {
+    $('#cartContent').innerHTML = '<div class="empty-cart"><i class="fas fa-wifi"></i><h3>加载失败</h3><p>请检查网络连接</p></div>';
+  }
+}
+
+function renderCart() {
+  if (!cartItems.length) {
+    $('#cartContent').innerHTML = `<div class="empty-cart">
+      <i class="fas fa-shopping-cart"></i><h3>购物车是空的</h3><p>快去挑选心仪的家具吧~</p>
+      <a href="/index.html#products">去逛逛</a></div>`;
+    return;
+  }
+
+  let total = cartItems.reduce((s,i) => s + i.product_price * i.quantity, 0);
+  $('#cartCount').textContent = `（共 ${cartItems.length} 件）`;
+
+  $('#cartContent').innerHTML = `
+    <div class="cart-table">
+      <div class="cart-header">
+        <span>全选</span><span>商品信息</span><span>单价</span><span>数量</span><span>小计</span><span></span>
+      </div>
+      ${cartItems.map((item, idx) => `
+        <div class="cart-item">
+          <div class="cart-checkbox"><input type="checkbox" checked onchange="updateTotal()"></div>
+          <div class="cart-product">
+            <img src="${item.image_url || ''}" alt="${item.product_name}" onerror="this.style.display='none'">
+            <div class="info"><h4>${item.product_name}</h4></div>
+          </div>
+          <div class="cart-price">¥${item.product_price.toLocaleString()}</div>
+          <div class="cart-qty">
+            <button onclick="changeQty(${item.id}, ${item.quantity-1})">−</button>
+            <span>${item.quantity}</span>
+            <button onclick="changeQty(${item.id}, ${item.quantity+1})">+</button>
+          </div>
+          <div class="cart-subtotal">¥${(item.product_price * item.quantity).toLocaleString()}</div>
+          <button class="cart-delete" onclick="removeItem(${item.id})" title="删除">✕</button>
+        </div>
+      `).join('')}
+      <div class="cart-footer">
+        <div class="select-all"><input type="checkbox" checked onchange="toggleAll(this)"> 全选</div>
+        <div class="summary">
+          <span class="total-label">合计：</span>
+          <span class="total-price">¥<span id="totalPrice">${total.toLocaleString()}</span></span>
+          <button class="btn-checkout" onclick="checkout()">去结算</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function changeQty(cid, qty) {
+  if (qty < 1) { removeItem(cid); return; }
+  await fetch(API + '/cart/' + cid, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({quantity:qty}) });
+  await loadCart();
+}
+
+async function removeItem(cid) {
+  if (!confirm('确定删除该商品？')) return;
+  await fetch(API + '/cart/' + cid, { method:'DELETE' });
+  showToast('已删除');
+  await loadCart();
+}
+
+async function checkout() {
+  if (!currentUser) return alert('请先登录');
+  try {
+    let r = await fetch(API + '/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:currentUser.id, username:currentUser.nickname||currentUser.username}) });
+    let d = await r.json();
+    if (d.success) {
+      showToast('下单成功！共 ¥' + d.total);
+      // 弹窗微信二维码15s
+      let secs = 15;
+      let overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+      overlay.innerHTML = `<div style="background:white;border-radius:16px;padding:40px;text-align:center;max-width:400px;width:90%;">
+        <h2 style="color:#3E2723;margin-bottom:8px;">✅ ${d.message}</h2>
+        <p style="color:#8D6E63;margin-bottom:24px;">请扫码联系客服确认订单</p>
+        <div style="background:#FDF8F0;padding:24px;border-radius:12px;display:inline-block;">
+          <img src="images/bbb.jpg" style="width:200px;height:200px;object-fit:contain;" onerror="this.src='https://via.placeholder.com/200/8B5E3C/fff?text=WeChat'">
+          <p style="color:#8B5E3C;font-weight:700;margin-top:16px;">微信扫码添加客服</p>
+        </div>
+        <p id="qrTimer" style="color:#e74c3c;font-size:1.2rem;margin-top:16px;">窗口将在 <b>${secs}</b> 秒后关闭</p>
+        <button onclick="this.parentElement.parentElement.remove()" style="margin-top:16px;padding:10px 30px;background:#D7CCC8;border:none;border-radius:8px;cursor:pointer;font-size:0.9rem;">手动关闭</button>
+      </div>`;
+      document.body.appendChild(overlay);
+      let timer = setInterval(() => {
+        secs--;
+        let el = document.getElementById('qrTimer');
+        if (el) el.innerHTML = `窗口将在 <b>${secs}</b> 秒后关闭`;
+        if (secs <= 0) { clearInterval(timer); overlay.remove(); }
+      }, 1000);
+      setTimeout(() => loadCart(), 500);
+    } else {
+      alert(d.message);
+    }
+  } catch(e) { alert('下单失败，请重试'); }
+}
+
+function updateUserUI() {
+  let el = $('#userLink');
+  if (!el) return;
+  if (currentUser) {
+    el.innerHTML = `<i class="fas fa-user-circle"></i> ${currentUser.nickname||currentUser.username}`;
+    el.onclick = () => location.href = '/profile.html';
+  } else {
+    el.innerHTML = '<i class="fas fa-sign-in-alt"></i> 登录';
+    el.onclick = () => location.href = '/index.html';
+  }
+}
+
+loadCart();
+updateUserUI();
+</script>
+</body>
+</html>

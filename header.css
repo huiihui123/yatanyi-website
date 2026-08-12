@@ -1,0 +1,225 @@
+/* ============= 头部导航栏样式 ======================================== */
+/* 雅檀怡家私城 - 高端实木家具品牌导航 */
+
+/* --- 导航栏容器 --- */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow, background;
+}
+
+/* 滚动后加深效果 */
+.header.scrolled {
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 2px 24px rgba(62, 39, 35, 0.10);
+    border-bottom-color: var(--border-color);
+}
+
+/* --- 顶部区域：Logo + 联系方式 --- */
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+}
+
+.logo img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+    transition: transform 0.3s ease;
+}
+
+.logo:hover img {
+    transform: scale(1.08);
+}
+
+.logo h1 {
+    font-size: 1.35rem;
+    color: var(--dark-color);
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 联系方式 */
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.contact-info .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.contact-info .contact-item i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+/* --- 移动端菜单按钮 --- */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: var(--dark-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+    background-color: var(--accent-light);
+    color: var(--primary-color);
+}
+
+/* --- 导航菜单 --- */
+.nav {
+    border-top: 1px solid var(--border-color);
+}
+
+.nav-menu {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-menu li {
+    margin: 0 4px;
+}
+
+/* 导航链接 */
+.nav-link {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 1.05rem;
+    padding: 12px 20px;
+    position: relative;
+    transition: color 0.3s ease;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.5px;
+}
+
+/* 悬停背景高亮 */
+.nav-link:hover {
+    color: var(--primary-color);
+    background-color: var(--accent-light);
+}
+
+/* 激活状态 */
+.nav-link.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* 底部指示线 */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: calc(100% - 32px);
+    height: 2.5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: translateX(-50%) scaleX(1);
+}
+
+/* --- 响应式：移动端 --- */
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .contact-info .contact-item {
+        display: none;
+    }
+
+    .nav {
+        border-top: none;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(16px);
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 0;
+        box-shadow: 0 8px 32px rgba(62, 39, 35, 0.10);
+        display: none;
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .nav-menu.active {
+        display: flex;
+        animation: slideDown 0.3s ease;
+    }
+
+    .nav-menu li {
+        margin: 2px 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-link {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 1.1rem;
+    }
+
+    .nav-link::after {
+        display: none;
+    }
+
+    .nav-link.active {
+        background-color: var(--accent-light);
+        border-radius: 0;
+    }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
