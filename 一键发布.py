@@ -26,8 +26,12 @@ if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
 
 DRY_RUN = '--dry-run' in sys.argv
 
-# ========== 项目目录定位（脚本放哪都能用） ==========
-_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# ========== 项目目录定位（脚本/exe 放哪都能用） ==========
+# ★ PyInstaller 打包后 __file__ 指向临时解压目录，必须用 sys.executable 定位 exe 所在目录
+if getattr(sys, 'frozen', False):          # 打包成 exe 运行时
+    _SCRIPT_DIR = os.path.dirname(sys.executable)
+else:                                      # 直接运行 .py 时
+    _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 if os.path.isdir(os.path.join(_SCRIPT_DIR, 'backend')):
     PROJECT_DIR = _SCRIPT_DIR                       # ① 脚本同目录有 backend
 elif os.path.isdir(r'F:\zhuomian\jtyjsc\backend'):
