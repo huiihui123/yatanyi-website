@@ -808,11 +808,17 @@ document.addEventListener('DOMContentLoaded', function() {
       let d = await r.json();
       if (!d.success) { alert(d.message); return; }
       let u = d.user;
-      let av = u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.nickname||u.username)}&background=8B5E3C&color=fff&size=100`;
+      // ★ 本地生成首字母头像（SVG data URI），替代被墙的 ui-avatars.com
+      function _localAvatar(name) {
+        const ch = encodeURIComponent(String(name || '?').trim().charAt(0).toUpperCase() || '?');
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#8B5E3C"/><text x="50" y="52" text-anchor="middle" dominant-baseline="middle" font-size="44" fill="#fff" font-family="Microsoft YaHei">' + ch + '</text></svg>';
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      }
+      let av = u.avatar || _localAvatar(u.nickname || u.username);
       showModal(`
         <div style="padding:30px;">
           <div style="text-align:center;margin-bottom:24px;">
-            <img src="${av}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #8B5E3C;" id="profileAvatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(u.nickname||u.username)}&background=8B5E3C&color=fff&size=100'">
+            <img src="${av}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #8B5E3C;" id="profileAvatar" onerror="this.onerror=null;this.src='${_localAvatar(u.nickname || u.username)}'">
             <p style="color:#8D6E63;font-size:0.8rem;margin-top:8px;cursor:pointer;" onclick="let url=prompt('输入头像图片URL:');if(url){document.getElementById('profileAvatar').src=url;window._profileAvatarUrl=url;}">点击修改头像</p>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
