@@ -1,0 +1,24 @@
+# ===== Python =====
+__pycache__/
+*.pyc
+
+# ===== 数据库（本地数据，不提交到 git）=====
+backend/*.db
+backend/*.db-wal
+backend/*.db-shm
+
+# ===== 订单导出文件 =====
+**/订单文件/
+
+# ===== 上传的图片（管理员后台上传）=====
+uploads/
+
+# ===== 打包/可执行/临时文件 =====
+*.zip
+*.exe
+*.xlsx
+*.docx
+
+# ===== 系统文件 =====
+Thumbs.db
+.DS_Store

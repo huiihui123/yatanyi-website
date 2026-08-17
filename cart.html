@@ -75,6 +75,22 @@ body { font-family: 'Noto Sans SC','Microsoft YaHei',sans-serif; background: var
 .toast.show { display: block; }
 .toast.success { background: #2E7D32; }
 
+/* ====== 需求3：结算确认对话框样式（与全站确认框风格一致） ====== */
+.confirm-layer { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.45); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+.confirm-box { background:#fff; border-radius:12px; max-width:400px; width:90%; padding:28px 24px; text-align:center; animation:fadeInUp .25s; box-shadow:0 12px 40px rgba(0,0,0,0.25); }
+.confirm-box h3 { color:#3E2723; font-size:1.15rem; margin:0 0 10px; }
+.confirm-box p { color:#8D6E63; font-size:0.9rem; line-height:1.7; margin-bottom:22px; word-break:break-all; }
+.confirm-box .confirm-icon { font-size:2.2rem; margin-bottom:10px; }
+.confirm-box .confirm-actions { display:flex; gap:12px; }
+.confirm-box .confirm-actions button { flex:1; padding:12px; border:none; border-radius:8px; cursor:pointer; font-size:1rem; transition:all .2s; }
+.confirm-box .btn-cancel { background:#EFE7DF; color:#6D4C41; }
+.confirm-box .btn-cancel:hover { background:#E3D5C8; }
+.confirm-box .btn-ok { background:#8B5E3C; color:#fff; }
+.confirm-box .btn-ok:hover { background:#6B3F23; }
+.confirm-box .btn-ok.danger { background:#e74c3c; }
+.confirm-box .btn-ok.danger:hover { background:#c0392b; }
+@keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
 @media (max-width: 768px) {
   .topbar { padding: 0 16px; }
   .cart-header { display: none; }
@@ -109,12 +125,60 @@ body { font-family: 'Noto Sans SC','Microsoft YaHei',sans-serif; background: var
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:5000/api';
-let currentUser = JSON.parse(localStorage.getItem('yatan_user') || 'null');
+// ★ 同源 API：由 Flask 托管时自动适配，避免硬编码 localhost 导致生产环境连不上
+const API = (location.origin.includes('localhost') || location.origin.includes('127.0.0.1') || location.port === '5000')
+  ? (location.origin + '/api') : '/api';
+let currentUser = null;
+try { currentUser = JSON.parse(localStorage.getItem('yatan_user') || 'null'); } catch(e) { currentUser = null; }
 let cartItems = [];
 
 function $(s) { return document.querySelector(s); }
-function showToast(m) { let t=$('#toast'); t.textContent=m; t.className='toast show success'; setTimeout(()=>t.classList.remove('show'),2000); }
+
+// ====== 需求3：结算确认对话框（确认/取消，确认后执行回调） ======
+function showConfirmDialog(opts) {
+  // 参数：{ icon, title, message, confirmText, cancelText, danger, onConfirm }
+  const layer = document.createElement('div');
+  layer.className = 'confirm-layer';
+  // 组装确认框内容：图标 + 标题 + 说明 + 取消/确认按钮
+  layer.innerHTML = '<div class="confirm-box">'
+    + '<div class="confirm-icon">' + (opts.icon || '❓') + '</div>'
+    + '<h3>' + (opts.title || '') + '</h3>'
+    + (opts.message ? '<p>' + opts.message + '</p>' : '')
+    + '<div class="confirm-actions">'
+    + '<button class="btn-cancel">' + (opts.cancelText || '取消') + '</button>'
+    + '<button class="btn-ok' + (opts.danger ? ' danger' : '') + '">' + (opts.confirmText || '确认') + '</button>'
+    + '</div></div>';
+  document.body.appendChild(layer);
+  // 事件绑定：点遮罩=取消，点按钮=取消/确认
+  layer.addEventListener('click', function(e) {
+    if (e.target === layer) { layer.remove(); return; }
+    if (e.target.classList.contains('btn-cancel')) { layer.remove(); return; }
+    if (e.target.classList.contains('btn-ok')) {
+      layer.remove();
+      if (typeof opts.onConfirm === 'function') opts.onConfirm();
+    }
+  });
+}
+function showToast(m, isError) { let t=$('#toast'); t.textContent=m; t.className='toast show' + (isError?'':' success'); setTimeout(()=>t.classList.remove('show'),2000); }
+
+// ★ BUG修复：原先 updateTotal/toggleAll 从未定义，勾选/全选直接报错、合计不变
+function escapeHtml(s) {
+  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function updateTotal() {
+  let checked = [...document.querySelectorAll('.cart-item .cart-checkbox input')];
+  let total = 0;
+  cartItems.forEach((item, idx) => {
+    if (checked[idx] && checked[idx].checked) total += item.product_price * item.quantity;
+  });
+  $('#totalPrice').textContent = total.toLocaleString();
+  let btn = document.querySelector('.btn-checkout');
+  if (btn) btn.disabled = total <= 0;
+}
+function toggleAll(el) {
+  document.querySelectorAll('.cart-item .cart-checkbox input').forEach(c => c.checked = el.checked);
+  updateTotal();
+}
 
 async function loadCart() {
   if (!currentUser) {
@@ -153,17 +217,17 @@ function renderCart() {
         <div class="cart-item">
           <div class="cart-checkbox"><input type="checkbox" checked onchange="updateTotal()"></div>
           <div class="cart-product">
-            <img src="${item.image_url || ''}" alt="${item.product_name}" onerror="this.style.display='none'">
-            <div class="info"><h4>${item.product_name}</h4></div>
+            <img src="${escapeHtml(item.image_url || '')}" alt="${escapeHtml(item.product_name)}" onerror="this.style.display='none'">
+            <div class="info"><h4>${escapeHtml(item.product_name)}</h4></div>
           </div>
-          <div class="cart-price">¥${item.product_price.toLocaleString()}</div>
+          <div class="cart-price">¥${Number(item.product_price).toLocaleString()}</div>
           <div class="cart-qty">
-            <button onclick="changeQty(${item.id}, ${item.quantity-1})">−</button>
+            <button type="button" onclick="changeQty(${item.id}, ${item.quantity-1})">−</button>
             <span>${item.quantity}</span>
-            <button onclick="changeQty(${item.id}, ${item.quantity+1})">+</button>
+            <button type="button" onclick="changeQty(${item.id}, ${item.quantity+1})">+</button>
           </div>
           <div class="cart-subtotal">¥${(item.product_price * item.quantity).toLocaleString()}</div>
-          <button class="cart-delete" onclick="removeItem(${item.id})" title="删除">✕</button>
+          <button type="button" class="cart-delete" onclick="removeItem(${item.id})" title="删除">✕</button>
         </div>
       `).join('')}
       <div class="cart-footer">
@@ -171,7 +235,7 @@ function renderCart() {
         <div class="summary">
           <span class="total-label">合计：</span>
           <span class="total-price">¥<span id="totalPrice">${total.toLocaleString()}</span></span>
-          <button class="btn-checkout" onclick="checkout()">去结算</button>
+          <button type="button" class="btn-checkout" onclick="checkout()">去结算</button>
         </div>
       </div>
     </div>`;
@@ -179,23 +243,48 @@ function renderCart() {
 
 async function changeQty(cid, qty) {
   if (qty < 1) { removeItem(cid); return; }
-  await fetch(API + '/cart/' + cid, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({quantity:qty}) });
-  await loadCart();
+  try {
+    let r = await fetch(API + '/cart/' + cid, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({quantity:qty}) });
+    if (!r.ok) { showToast('修改失败', true); return; }
+    await loadCart();
+  } catch(e) { showToast('网络错误', true); }
 }
 
 async function removeItem(cid) {
-  if (!confirm('确定删除该商品？')) return;
-  await fetch(API + '/cart/' + cid, { method:'DELETE' });
-  showToast('已删除');
-  await loadCart();
+  // 需求4：删除确认统一使用自定义对话框（替代原生 confirm，交互风格一致）
+  showConfirmDialog({
+    icon: '🗑️',
+    title: '确定删除该商品？',
+    confirmText: '删除',
+    cancelText: '取消',
+    danger: true,   // 危险操作：确认按钮红色警示
+    onConfirm: async function() {
+      try {
+        let r = await fetch(API + '/cart/' + cid, { method:'DELETE' });
+        if (!r.ok) { showToast('删除失败', true); return; }
+        showToast('已删除');
+        await loadCart();
+      } catch(e) { showToast('网络错误', true); }
+    }
+  });
 }
 
 async function checkout() {
   if (!currentUser) return alert('请先登录');
-  try {
-    let r = await fetch(API + '/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:currentUser.id, username:currentUser.nickname||currentUser.username}) });
-    let d = await r.json();
-    if (d.success) {
+  // 需求3：去结算前弹出确认对话框「您是否将确认前往购买？」
+  //   确认 → 生成订单 + 弹出微信二维码；取消 → 停留在购物车页
+  showConfirmDialog({
+    icon: '💳',
+    title: '您是否将确认前往购买？',
+    message: '确认后将为您生成订单，并通过微信扫码联系客服完成付款。',
+    confirmText: '确认购买',
+    cancelText: '取消',
+    onConfirm: async function() {
+      try {
+        // ★ BUG修复：统一用 username（与首页 checkout 一致），避免同一订单落库姓名不一致
+        let r = await fetch(API + '/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:currentUser.id, username:currentUser.username}) });
+        let d = await r.json();
+        if (d.success) {
       showToast('下单成功！共 ¥' + d.total);
       // 弹窗微信二维码15s
       let secs = 15;
@@ -205,7 +294,8 @@ async function checkout() {
         <h2 style="color:#3E2723;margin-bottom:8px;">✅ ${d.message}</h2>
         <p style="color:#8D6E63;margin-bottom:24px;">请扫码联系客服确认订单</p>
         <div style="background:#FDF8F0;padding:24px;border-radius:12px;display:inline-block;">
-          <img src="images/bbb.jpg" style="width:200px;height:200px;object-fit:contain;" onerror="this.src='https://via.placeholder.com/200/8B5E3C/fff?text=WeChat'">
+          <!-- ★ BUG修复：原 images/bbb.jpg 是个人照片，改为真正的微信二维码 ytyjs.jpg -->
+          <img src="images/ytyjs.jpg" style="width:200px;height:200px;object-fit:contain;" onerror="this.src='https://via.placeholder.com/200/8B5E3C/fff?text=WeChat'">
           <p style="color:#8B5E3C;font-weight:700;margin-top:16px;">微信扫码添加客服</p>
         </div>
         <p id="qrTimer" style="color:#e74c3c;font-size:1.2rem;margin-top:16px;">窗口将在 <b>${secs}</b> 秒后关闭</p>
@@ -218,12 +308,14 @@ async function checkout() {
         if (el) el.innerHTML = `窗口将在 <b>${secs}</b> 秒后关闭`;
         if (secs <= 0) { clearInterval(timer); overlay.remove(); }
       }, 1000);
-      setTimeout(() => loadCart(), 500);
-    } else {
-      alert(d.message);
-    }
-  } catch(e) { alert('下单失败，请重试'); }
-}
+        setTimeout(() => loadCart(), 500);
+        } else {
+          alert(d.message);
+        }
+      } catch(e) { alert('下单失败，请重试'); }
+    }   // ← onConfirm 回调结束
+  });   // ← showConfirmDialog 调用结束
+}   // ← checkout 函数结束
 
 function updateUserUI() {
   let el = $('#userLink');

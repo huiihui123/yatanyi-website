@@ -1,3 +1,5 @@
-flask>=2.3.0
-flask-cors>=4.0.0
-openpyxl>=3.1.0
+# 雅檀怡家私城后端依赖（版本已锁定，避免部署环境版本漂移）
+flask==3.1.3
+flask-cors==4.0.1
+openpyxl==3.1.5
+waitress==3.0.2

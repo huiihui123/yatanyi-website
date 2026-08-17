@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雅檀怡家私城 — 数据库结构树形图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    padding: 30px 20px 60px;
+    color: #2c3e50;
+  }
+  h1 { text-align: center; font-size: 26px; margin-bottom: 6px; color: #1a3a5c; }
+  .subtitle { text-align: center; color: #7f8c9b; font-size: 13px; margin-bottom: 28px; }
+  .subtitle code { background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid #d5dbe2; }
+  .legend { text-align: center; margin-bottom: 22px; font-size: 12px; }
+  .legend span { display: inline-block; margin: 0 8px; padding: 3px 10px; border-radius: 12px; color: #fff; font-size: 12px; }
+  .tree { max-width: 1100px; margin: 0 auto; }
+  .node { border-radius: 10px; padding: 14px 18px; margin: 8px 0; box-shadow: 0 2px 8px rgba(0,0,0,.08); border: 2px solid transparent; transition: box-shadow .2s; }
+  .node:hover { box-shadow: 0 4px 16px rgba(0,0,0,.16); }
+  .node-title { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+  .node-title .tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,.85); color: #555; }
+  .node-meta { font-size: 12px; color: #667; margin-top: 4px; }
+  .cols { margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+  .col { background: rgba(255,255,255,.75); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; font-family: Consolas, monospace; }
+  .col b { color: #1a3a5c; }
+  .col .type { color: #8a5a00; }
+  .col .flag { color: #c0392b; font-size: 11px; }
+  .col .dflt { color: #27ae60; font-size: 11px; }
+  .idx { margin-top: 8px; font-size: 12px; color: #6a3fa0; }
+  .idx b { color: #6a3fa0; }
+  .root {
+    background: linear-gradient(135deg, #1a3a5c, #2d5f8a);
+    color: #fff; border-color: #0f2a44; text-align: center;
+  }
+  .root .node-meta { color: #bcd3e8; }
+  /* 域分组 */
+  .domain { margin: 18px 0 6px; font-weight: 700; font-size: 15px; color: #4a5a6a; padding-left: 10px; border-left: 4px solid #8aa; }
+  .domain.users { border-color: #5b8def; } .domain.users .dot { color: #5b8def; }
+  .domain.products { border-color: #f39c12; } .domain.products .dot { color: #f39c12; }
+  .domain.trade { border-color: #27ae60; } .domain.trade .dot { color: #27ae60; }
+  .domain.market { border-color: #e74c3c; } .domain.market .dot { color: #e74c3c; }
+  /* 分支线 */
+  .branch { margin-left: 34px; border-left: 2px dashed #b8c4d0; padding-left: 18px; }
+  /* 表节点配色 */
+  .t-users { background: #fff; border-color: #5b8def; }
+  .t-codes { background: #fff; border-color: #7aa2e8; }
+  .t-products { background: #fff; border-color: #f39c12; }
+  .t-cart { background: #fff; border-color: #27ae60; }
+  .t-orders { background: #fff; border-color: #2ecc71; }
+  .t-consult { background: #fff; border-color: #e74c3c; }
+  .t-subs { background: #fff; border-color: #ff7675; }
+  /* 关系说明 */
+  .rel { margin-top: 8px; padding: 6px 10px; background: #fdf6ec; border: 1px dashed #e8b64c; border-radius: 6px; font-size: 12px; color: #7a5a10; }
+  .rel b { color: #a67c00; }
+  .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #99a; }
+</style>
+</head>
+<body>
+<h1>🪑 雅檀怡家私城 · 数据库树形结构图</h1>
+<div class="subtitle">数据库文件：<code>backend/yatanyi.db</code>（SQLite · WAL 模式）· 7 张业务表 + 1 张系统表 · 无视图</div>
+<div class="legend">
+  <span style="background:#5b8def">用户域</span>
+  <span style="background:#f39c12">商品域</span>
+  <span style="background:#27ae60">交易域</span>
+  <span style="background:#e74c3c">营销/服务域</span>
+  <span style="background:#95a5a6">系统</span>
+</div>
+
+<div class="tree">
+
+  <!-- 根节点 -->
+  <div class="node root">
+    <div class="node-title">📦 yatanyi.db <span class="tag">SQLite 单文件数据库</span></div>
+    <div class="node-meta">users 7 行 · products 36 行 · orders 12 行 · consultations 9 行 · subscriptions 1 行 · verification_codes 2 行 · cart_items 0 行</div>
+  </div>
+
+  <div class="branch">
+
+    <!-- 用户域 -->
+    <div class="domain users"><span class="dot">●</span> 用户域（账号 + 安全）</div>
+    <div class="node t-users">
+      <div class="node-title">🧍 users <span class="tag">用户账户表 · 全库中心表</span></div>
+      <div class="node-meta">1 ← N 被 cart_items / orders 引用（user_id 逻辑外键，应用层维护）</div>
+      <div class="cols">
+        <div class="col"><b>id</b> <span class="type">INTEGER</span> <span class="flag">PK 自增</span></div>
+        <div class="col"><b>username</b> <span class="type">TEXT</span> <span class="flag">NOT NULL UNIQUE</span></div>
+        <div class="col"><b>password</b> <span class="type">TEXT</span> <span class="flag">NOT NULL · SHA-256</span></div>
+        <div class="col"><b>phone</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>email</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>avatar</b> <span class="type">TEXT</span> <span class="dflt">''</span></div>
+        <div class="col"><b>created_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>last_login</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>nickname</b> <span class="type">TEXT</span> <span class="dflt">''</span></div>
+        <div class="col"><b>gender</b> <span class="type">TEXT</span> <span class="dflt">''</span></div>
+        <div class="col"><b>age</b> <span class="type">INTEGER</span> <span class="dflt">0</span></div>
+        <div class="col"><b>region</b> <span class="type">TEXT</span> <span class="dflt">''</span></div>
+        <div class="col"><b>signature</b> <span class="type">TEXT</span> <span class="dflt">''</span></div>
+      </div>
+    </div>
+    <div class="node t-codes">
+      <div class="node-title">🔑 verification_codes <span class="tag">验证码表</span></div>
+      <div class="node-meta">通过 phone 与 users 弱关联（忘记密码找回）</div>
+      <div class="cols">
+        <div class="col"><b>id</b> <span class="type">INTEGER</span> <span class="flag">PK 自增</span></div>
+        <div class="col"><b>phone</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>code</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>purpose</b> <span class="type">TEXT</span> <span class="dflt">'reset_password'</span></div>
+        <div class="col"><b>expires_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>used</b> <span class="type">INTEGER</span> <span class="dflt">0</span></div>
+        <div class="col"><b>created_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+      </div>
+    </div>
+
+    <!-- 商品域 -->
+    <div class="domain products"><span class="dot">●</span> 商品域（主数据 · 36 行）</div>
+    <div class="node t-products">
+      <div class="node-title">🛋️ products <span class="tag">商品目录表</span></div>
+      <div class="node-meta">分类枚举：sofa 沙发 / bed 床 / table 餐桌 / storage 柜类 · 被购物车与订单"快照引用"（无硬外键）</div>
+      <div class="cols">
+        <div class="col"><b>id</b> <span class="type">INTEGER</span> <span class="flag">PK 自增</span></div>
+        <div class="col"><b>name</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>category</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>price</b> <span class="type">REAL</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>original_price</b> <span class="type">REAL</span></div>
+        <div class="col"><b>description</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>image_url</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>rating</b> <span class="type">REAL</span> <span class="dflt">4.5</span></div>
+        <div class="col"><b>review_count</b> <span class="type">INTEGER</span> <span class="dflt">0</span></div>
+        <div class="col"><b>is_hot</b> <span class="type">INTEGER</span> <span class="dflt">0</span></div>
+        <div class="col"><b>is_new</b> <span class="type">INTEGER</span> <span class="dflt">0</span></div>
+        <div class="col"><b>created_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>is_active</b> <span class="type">INTEGER</span> <span class="dflt">1</span> <span class="flag">上架状态</span></div>
+      </div>
+    </div>
+
+    <!-- 交易域 -->
+    <div class="domain trade"><span class="dot">●</span> 交易域（用户行为闭环）</div>
+    <div class="node t-cart">
+      <div class="node-title">🛒 cart_items <span class="tag">购物车表</span></div>
+      <div class="node-meta">user_id → users.id（N 对 1）· 当前 0 行</div>
+      <div class="idx">索引：<b>idx_cart_user</b>(user_id)</div>
+      <div class="cols">
+        <div class="col"><b>id</b> <span class="type">INTEGER</span> <span class="flag">PK 自增</span></div>
+        <div class="col"><b>user_id</b> <span class="type">INTEGER</span> <span class="flag">NOT NULL → users</span></div>
+        <div class="col"><b>product_name</b> <span class="type">TEXT</span> <span class="flag">NOT NULL · 快照</span></div>
+        <div class="col"><b>product_price</b> <span class="type">REAL</span> <span class="flag">NOT NULL · 快照</span></div>
+        <div class="col"><b>quantity</b> <span class="type">INTEGER</span> <span class="dflt">1</span></div>
+        <div class="col"><b>image_url</b> <span class="type">TEXT</span> <span class="dflt">快照</span></div>
+        <div class="col"><b>added_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+      </div>
+    </div>
+    <div class="node t-orders">
+      <div class="node-title">📦 orders <span class="tag">订单表</span></div>
+      <div class="node-meta">user_id → users.id（N 对 1）· 状态枚举：pending / confirmed · 当前 12 行</div>
+      <div class="idx">索引：<b>idx_orders_user</b>(user_id)</div>
+      <div class="cols">
+        <div class="col"><b>id</b> <span class="type">INTEGER</span> <span class="flag">PK 自增</span></div>
+        <div class="col"><b>user_id</b> <span class="type">INTEGER</span> <span class="flag">NOT NULL → users</span></div>
+        <div class="col"><b>username</b> <span class="type">TEXT</span> <span class="flag">NOT NULL · 冗余</span></div>
+        <div class="col"><b>items_json</b> <span class="type">TEXT</span> <span class="flag">NOT NULL · 商品快照 JSON</span></div>
+        <div class="col"><b>total_amount</b> <span class="type">REAL</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>status</b> <span class="type">TEXT</span> <span class="dflt">'pending'</span></div>
+        <div class="col"><b>xlsx_path</b> <span class="type">TEXT</span> <span class="dflt">Excel 导出路径</span></div>
+        <div class="col"><b>created_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+      </div>
+      <div class="rel">💡 <b>items_json 内部结构</b>（JSON 数组，每项 = 一个商品快照）：<br>
+        <code>[{ "product_name": "Test Sofa", "product_price": 3999.0, "quantity": 1, "image_url": "" }, ...]</code></div>
+    </div>
+
+    <!-- 营销/服务域 -->
+    <div class="domain market"><span class="dot">●</span> 营销 / 服务域（独立表单数据）</div>
+    <div class="node t-consult">
+      <div class="node-title">📞 consultations <span class="tag">客户咨询预约表</span></div>
+      <div class="node-meta">独立表 · 状态枚举：pending / contacted / completed · 当前 9 行</div>
+      <div class="idx">索引：<b>idx_consult_status</b>(status)、<b>idx_consult_created</b>(created_at)</div>
+      <div class="cols">
+        <div class="col"><b>id</b> <span class="type">INTEGER</span> <span class="flag">PK 自增</span></div>
+        <div class="col"><b>name</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>phone</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>email</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>consult_type</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>message</b> <span class="type">TEXT</span></div>
+        <div class="col"><b>status</b> <span class="type">TEXT</span> <span class="dflt">'pending'</span></div>
+        <div class="col"><b>created_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>ip_address</b> <span class="type">TEXT</span></div>
+      </div>
+    </div>
+    <div class="node t-subs">
+      <div class="node-title">✉️ subscriptions <span class="tag">新闻订阅表</span></div>
+      <div class="node-meta">独立表 · email 唯一 · 当前 1 行</div>
+      <div class="idx">索引：<b>idx_subs_created</b>(created_at)</div>
+      <div class="cols">
+        <div class="col"><b>id</b> <span class="type">INTEGER</span> <span class="flag">PK 自增</span></div>
+        <div class="col"><b>email</b> <span class="type">TEXT</span> <span class="flag">NOT NULL UNIQUE</span></div>
+        <div class="col"><b>created_at</b> <span class="type">TEXT</span> <span class="flag">NOT NULL</span></div>
+        <div class="col"><b>ip_address</b> <span class="type">TEXT</span></div>
+      </div>
+    </div>
+
+    <!-- 系统 -->
+    <div class="domain" style="border-color:#95a5a6"><span class="dot" style="color:#95a5a6">●</span> 系统</div>
+    <div class="node t-subs" style="border-color:#95a5a6">
+      <div class="node-title">⚙️ sqlite_sequence <span class="tag">SQLite 系统表</span></div>
+      <div class="node-meta">记录所有 AUTOINCREMENT 表的下一个自增 id，无需手工维护</div>
+    </div>
+
+  </div>
+
+  <!-- 关系图 -->
+  <div class="domain trade" style="margin-top:34px"><span class="dot" style="color:#6a3fa0">●</span> 表间关系一览（应用层逻辑外键，SQLite 未声明 FK）</div>
+  <div class="node" style="border-color:#6a3fa0; background:#faf7ff">
+    <div style="font-size:13px; line-height:2">
+      🧍 <b>users</b> ──1:N──▶ 🛒 <b>cart_items</b>（user_id）<br>
+      🧍 <b>users</b> ──1:N──▶ 📦 <b>orders</b>（user_id）<br>
+      🧍 <b>users</b> ──弱关联──▶ 🔑 <b>verification_codes</b>（phone）<br>
+      🛋️ <b>products</b> ──快照引用──▶ 🛒 <b>cart_items</b> / 📦 <b>orders.items_json</b>（商品名+价格冗余，无外键）<br>
+      📞 <b>consultations</b>、✉️ <b>subscriptions</b>：独立表，不依赖任何其他表
+    </div>
+    <div class="rel" style="margin-top:10px">💡 <b>为什么用快照不用外键？</b> 商品后续改价、下架、删图都不影响已生成的购物车与历史订单，保证订单数据的"不可变性"。</div>
+  </div>
+
+  <!-- 业务闭环 -->
+  <div class="domain trade" style="margin-top:34px"><span class="dot" style="color:#16a085">●</span> 数据流转闭环</div>
+  <div class="node" style="border-color:#16a085; background:#f4fbf9; text-align:center; font-size:13px; line-height:2">
+    浏览商品 <b>products</b> → 注册/登录 <b>users</b> → 加入购物车 <b>cart_items</b> → 提交订单 <b>orders</b>（购物车行转 items_json 快照，并清空该用户购物车）→ 导出 Excel → <code>backend/订单文件/order_*.xlsx</code>（路径存入 xlsx_path）
+  </div>
+
+</div>
+
+<div class="footer">生成时间：2026-08-17 · 依据 backend/yatanyi.db 实际结构 + app.py / init_db.py 建表逻辑</div>
+</body>
+</html>

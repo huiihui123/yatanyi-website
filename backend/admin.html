@@ -57,6 +57,12 @@ tr:hover td { background:#FDFAF5; }
 .pagination button.active-page { background:var(--primary); color:white; border-color:var(--primary); }
 .pagination button:disabled { opacity:0.4; }
 .loading,.empty { text-align:center; padding:40px; color:var(--text-light); }
+.thumb-img { width:52px; height:52px; object-fit:contain; border-radius:6px; background:#faf7f2; border:1px solid var(--border); }
+.badge-hot { background:#FFF0F0; color:#E53935; padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:600; }
+.badge-new { background:#E8F5E9; color:#2E7D32; padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:600; }
+.badge-off { background:#EEEEEE; color:#757575; padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:600; }
+.status-on { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; background:#E8F5E9; color:#2E7D32; }
+.status-off { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; background:#EEEEEE; color:#757575; }
 .main { max-width:1400px; margin:0 auto; padding:24px 32px; }
 .toast { position:fixed; top:20px; right:20px; background:var(--dark); color:white; padding:12px 20px; border-radius:8px; font-size:0.85rem; z-index:9999; display:none; }
 .toast.show { display:block; }
@@ -111,8 +117,9 @@ tr:hover td { background:#FDFAF5; }
   <div class="brand"><i class="fas fa-couch"></i> 雅檀怡家私城 · 数据管理中心</div>
   <div class="links">
     <span id="serverStatus" style="color:var(--text-light);font-size:0.85rem;">连接中...</span>
+    <button class="btn btn-sm btn-outline" onclick="doLogout()" title="退出登录"><i class="fas fa-sign-out-alt"></i> 退出</button>
     <a href="/index.html" target="_blank" class="btn btn-sm btn-outline"><i class="fas fa-external-link-alt"></i> 前台</a>
-    <button class="btn btn-sm btn-outline" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> 刷新</button>
+    <button id="refreshBtn" class="btn btn-sm btn-outline" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> 刷新</button>
   </div>
 </div>
 
@@ -124,6 +131,7 @@ tr:hover td { background:#FDFAF5; }
     <div class="stat-card"><div class="stat-icon" style="background:#F3E5F5;color:#9C27B0;"><i class="fas fa-calendar-day"></i></div><div class="stat-info"><div class="stat-num" id="statToday">--</div><div class="stat-label">今日新增</div></div></div>
     <div class="stat-card"><div class="stat-icon" style="background:#E8F5E9;color:var(--completed);"><i class="fas fa-users"></i></div><div class="stat-info"><div class="stat-num" id="statUsers">--</div><div class="stat-label">注册用户</div></div></div>
     <div class="stat-card"><div class="stat-icon" style="background:#FFF8E1;color:var(--secondary);"><i class="fas fa-shopping-bag"></i></div><div class="stat-info"><div class="stat-num" id="statOrders">--</div><div class="stat-label">总订单</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:#E8F5E9;color:var(--completed);"><i class="fas fa-box-open"></i></div><div class="stat-info"><div class="stat-num" id="statProducts">--</div><div class="stat-label">产品总数</div></div></div>
   </div>
 
   <!-- 选项卡切换 -->
@@ -132,6 +140,7 @@ tr:hover td { background:#FDFAF5; }
     <button onclick="switchTab('subscription')">📧 订阅记录</button>
     <button onclick="switchTab('users')">👥 用户管理</button>
     <button onclick="switchTab('orders')">📦 订单管理</button>
+    <button onclick="switchTab('products')">🛋️ 产品管理</button>
   </div>
 
   <!-- 预约记录 -->
@@ -176,14 +185,89 @@ tr:hover td { background:#FDFAF5; }
       <div class="pagination" id="orderPager"></div>
     </div>
   </div>
+
+  <!-- 产品管理 -->
+  <div class="tab-panel" id="tab-products">
+    <div class="panel">
+      <div class="panel-header">
+        <h2><i class="fas fa-box-open"></i> 产品管理 <span id="productCount" style="font-weight:400;color:var(--text-light);font-size:0.85rem;"></span></h2>
+        <div class="panel-actions">
+          <input id="productSearch" placeholder="🔍 搜索产品名称..." style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;width:180px;outline:none;" oninput="debounceSearch()">
+          <button class="btn btn-outline active-filter" onclick="filterProduct('')">全部</button>
+          <button class="btn btn-outline" onclick="filterProduct('sofa')">沙发</button>
+          <button class="btn btn-outline" onclick="filterProduct('bed')">床具</button>
+          <button class="btn btn-outline" onclick="filterProduct('table')">餐桌</button>
+          <button class="btn btn-outline" onclick="filterProduct('storage')">储物</button>
+          <button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> 新增产品</button>
+        </div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID</th><th>图片</th><th>名称</th><th>分类</th><th>价格</th><th>原价</th><th>评分</th><th>评论</th><th>标记</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+        <tbody id="productBody"></tbody>
+      </table></div>
+      <div class="pagination" id="productPager"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 产品编辑弹窗 -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box" style="max-width:640px;text-align:left;">
+    <h3 id="productModalTitle" style="margin-bottom:18px;">新增产品</h3>
+    <input type="hidden" id="pfId">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="grid-column:1/-1;"><label style="font-size:0.8rem;color:var(--text-light);">产品名称 *</label><input id="pfName" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-top:4px;outline:none;"></div>
+      <div><label style="font-size:0.8rem;color:var(--text-light);">分类 *</label>
+        <select id="pfCategory" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-top:4px;background:#fff;">
+          <option value="sofa">沙发系列</option><option value="bed">床具系列</option><option value="table">餐桌系列</option><option value="storage">储物系列</option>
+        </select></div>
+      <div><label style="font-size:0.8rem;color:var(--text-light);">价格（元）*</label><input id="pfPrice" type="number" min="0" step="0.01" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-top:4px;outline:none;"></div>
+      <div><label style="font-size:0.8rem;color:var(--text-light);">原价（元）</label><input id="pfOriginal" type="number" min="0" step="0.01" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-top:4px;outline:none;"></div>
+      <div><label style="font-size:0.8rem;color:var(--text-light);">评分（0-5）</label><input id="pfRating" type="number" min="0" max="5" step="0.1" value="4.5" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-top:4px;outline:none;"></div>
+      <div><label style="font-size:0.8rem;color:var(--text-light);">评论数</label><input id="pfReviews" type="number" min="0" step="1" value="0" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-top:4px;outline:none;"></div>
+      <div style="grid-column:1/-1;"><label style="font-size:0.8rem;color:var(--text-light);">产品描述</label><textarea id="pfDesc" rows="2" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;margin-top:4px;outline:none;resize:vertical;"></textarea></div>
+      <div style="grid-column:1/-1;">
+        <label style="font-size:0.8rem;color:var(--text-light);">产品图片（可上传或直接填图片地址）</label>
+        <div style="display:flex;gap:10px;margin-top:6px;align-items:center;">
+          <label style="flex-shrink:0;padding:8px 14px;background:var(--accent-light);color:var(--primary-dark);border-radius:6px;cursor:pointer;font-size:0.85rem;"><i class="fas fa-upload"></i> 上传图片<input type="file" id="pfImageFile" accept="image/*" style="display:none;" onchange="uploadProductImage(this)"></label>
+          <input id="pfImageUrl" placeholder="images/xxx.jpg 或 https://..." style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:6px;outline:none;font-size:0.85rem;">
+          <img id="pfImagePreview" style="width:56px;height:56px;object-fit:contain;border:1px solid var(--border);border-radius:6px;background:#faf7f2;display:none;">
+        </div>
+      </div>
+      <div style="grid-column:1/-1;display:flex;gap:18px;margin-top:4px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;cursor:pointer;"><input type="checkbox" id="pfHot"> 🔥 热销</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;cursor:pointer;"><input type="checkbox" id="pfNew"> ✨ 新品</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;cursor:pointer;"><input type="checkbox" id="pfActive" checked> 🟢 上架（前台可见）</label>
+      </div>
+    </div>
+    <p id="productFormErr" style="color:var(--danger);font-size:0.85rem;margin-top:10px;display:none;"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+      <button class="btn btn-outline" onclick="closeProductModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveProduct()"><i class="fas fa-check"></i> 保存</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 <div class="modal-overlay" id="deleteModal"><div class="modal-box"><h3>确认删除</h3><p id="deleteMsg"></p><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;"><button class="btn btn-outline" onclick="closeModal()">取消</button><button class="btn btn-sm" style="background:#E53935;color:white;" id="confirmDeleteBtn">确认</button></div></div></div>
 
+<!-- ★ 管理后台登录界面 -->
+<div class="modal-overlay show" id="loginOverlay">
+  <div class="modal-box" style="max-width:380px;">
+    <div style="font-size:2.5rem;margin-bottom:8px;">🔒</div>
+    <h3 style="margin-bottom:4px;">雅檀怡家私城 · 管理后台</h3>
+    <p style="color:var(--text-light);font-size:0.85rem;margin-bottom:18px;">请输入管理密码</p>
+    <input type="password" id="loginPwd" placeholder="管理密码" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:6px;font-size:1rem;text-align:center;margin-bottom:12px;outline:none;" onkeydown="if(event.key==='Enter')doLogin()">
+    <p id="loginErr" style="color:var(--danger);font-size:0.85rem;margin-bottom:10px;display:none;">密码错误,请重试</p>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px;font-size:1rem;" onclick="doLogin()">登 录</button>
+  </div>
+</div>
+
 <script>
 const API='/api', AA='/api/admin';
 let currentTab='consult', consultFilter='', consultPage=1, subPage=1, userPage=1, orderPage=1, pendingDel=null;
+let productPage=1, productFilter='', productSearchQ='', _searchTimer=null;
+let _refreshBusy=false, _refreshTimer=null, _controllers=new Set();
 
 function $(s){return document.querySelector(s);}
 function $$(s){return document.querySelectorAll(s);}
@@ -192,13 +276,122 @@ function confirmD(m,f){$('#deleteMsg').textContent=m;$('#deleteModal').classList
 function closeModal(){$('#deleteModal').classList.remove('show');pendingDel=null;}
 $('#confirmDeleteBtn').addEventListener('click',()=>{if(pendingDel){pendingDel();closeModal();}});
 
-async function chk(){try{let r=await fetch(API+'/health'),d=await r.json();$('#serverStatus').innerHTML='🟢 '+d.status;}catch(e){$('#serverStatus').innerHTML='🔴 离线';}}
+/** 带超时 + 可取消的 fetch，避免频繁刷新时请求堆积堵死后端 */
+async function apiFetch(url, opts){
+  const ctrl=new AbortController();
+  _controllers.add(ctrl);
+  const timer=setTimeout(()=>ctrl.abort(),12000);
+  try{
+    const r=await fetch(url,Object.assign({},opts||{},{signal:ctrl.signal}));
+    if(r.status===401 && !(opts&&opts.noAuthRedirect)){
+      showLogin();                 // ★ 未登录/会话过期 → 弹登录框
+      throw new Error('unauthorized');
+    }
+    return await r.json();
+  }finally{
+    clearTimeout(timer);
+    _controllers.delete(ctrl);
+  }
+}
+
+// ★ 管理后台登录
+let _loginShown=false;
+function showLogin(){
+  if(_loginShown) return;
+  _loginShown=true;
+  const ov=$('#loginOverlay');
+  ov.classList.add('show');
+  ov.style.display='flex';
+  $('#loginErr').style.display='none';
+  setTimeout(()=>{const i=$('#loginPwd'); if(i) i.focus();},100);
+}
+function hideLogin(){
+  _loginShown=false;
+  const ov=$('#loginOverlay');
+  ov.classList.remove('show');
+  ov.style.display='none';
+}
+async function doLogin(){
+  const pwd=$('#loginPwd').value;
+  if(!pwd) return;
+  try{
+    const d=await apiFetch(AA+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd}),noAuthRedirect:true});
+    if(d.success){
+      $('#loginPwd').value='';
+      hideLogin();
+      showToast('登录成功','success');
+      // 登录后加载全部数据
+      await loadStats();
+      if(currentTab==='consult') await loadConsult();
+      else if(currentTab==='subscription') await loadSub();
+      else if(currentTab==='users') await loadUsers();
+      else if(currentTab==='orders') await loadOrders();
+      else await loadProducts();
+    }else{
+      $('#loginErr').style.display='block';
+    }
+  }catch(e){
+    $('#loginErr').style.display='block';
+  }
+}
+async function doLogout(){
+  try{
+    await apiFetch(AA+'/logout',{method:'POST',noAuthRedirect:true});
+  }catch(e){}
+  location.reload();
+}
+function abortAll(){
+  _controllers.forEach(c=>{try{c.abort();}catch(e){}});
+  _controllers.clear();
+}
+
+async function chk(){
+  try{
+    let d=await apiFetch(API+'/health');
+    $('#serverStatus').innerHTML='🟢 '+(d.status||'ok');
+    _retryCount=0;
+    _retryTimer=null;
+    return true;
+  }catch(e){
+    $('#serverStatus').innerHTML='🔴 离线 · 自动重连中…';
+    scheduleReconnect();
+    return false;
+  }
+}
+
+/** ★ 自动重连：断线后指数退避（2s→4s→8s→…→30s封顶），连上后自动刷新数据 */
+let _retryCount=0, _retryTimer=null;
+function scheduleReconnect(){
+  if(_retryTimer) return;               // 已有重连计划，不重复
+  const delay=Math.min(2000*Math.pow(2,_retryCount),30000);
+  _retryCount++;
+  _retryTimer=setTimeout(async ()=>{
+    _retryTimer=null;
+    const ok=await chk();
+    if(ok){
+      // 恢复后自动拉取当前页数据，用户无需手动刷新
+      await loadStats();
+      if(currentTab==='consult') await loadConsult();
+      else if(currentTab==='subscription') await loadSub();
+      else if(currentTab==='users') await loadUsers();
+      else if(currentTab==='orders') await loadOrders();
+      else await loadProducts();
+    }
+  },delay);
+}
 
 async function loadStats(){
-  try{let r=await fetch(API+'/stats'),d=await r.json();
-    if(d.success){let x=d.data;$('#statTotal').textContent=x.total_consult;$('#statPending').textContent=x.pending;$('#statToday').textContent=x.today_new;}
-    r=await fetch(AA+'/users');d=await r.json();if(d.success)$('#statUsers').textContent=d.total;
-    r=await fetch(AA+'/orders');d=await r.json();if(d.success)$('#statOrders').textContent=d.total;
+  try{
+    let d=await apiFetch(API+'/stats');
+    if(d.success){
+      let x=d.data;
+      $('#statTotal').textContent=x.total_consult;
+      $('#statPending').textContent=x.pending;
+      $('#statToday').textContent=x.today_new;
+      if(x.total_users!=null)$('#statUsers').textContent=x.total_users;
+      if(x.total_orders!=null)$('#statOrders').textContent=x.total_orders;
+      if(x.total_products!=null)$('#statProducts').textContent=x.total_products;
+    }
   }catch(e){}
 }
 
@@ -206,63 +399,380 @@ function switchTab(t){
   currentTab=t;
   $$('.tab-nav button').forEach(b=>b.classList.remove('active'));
   $$('.tab-panel').forEach(p=>p.classList.remove('active'));
-  event.target.classList.add('active');
+  (event&&event.target?event.target:null)&&event.target.classList.add('active');
   $('#tab-'+t).classList.add('active');
   if(t==='consult') loadConsult();
   else if(t==='subscription') loadSub();
   else if(t==='users') loadUsers();
   else if(t==='orders') loadOrders();
+  else if(t==='products') loadProducts();
 }
 
 // ---- 预约 ----
 async function loadConsult(p,f){p=p||consultPage;f=f!==undefined?f:consultFilter;consultPage=p;consultFilter=f;
   let tb=$('#consultBody');tb.innerHTML='<tr><td colspan="9"><div class="loading">加载中...</div></td></tr>';
   let url=AA+'/consultations?page='+p+'&limit=15'+(f?'&status='+f:'');
-  try{let r=await fetch(url),d=await r.json();
+  try{let d=await apiFetch(url);
     if(!d.success){tb.innerHTML='<tr><td colspan="9"><div class="empty">加载失败</div></td></tr>';return;}
     $('#consultCount').textContent='（共 '+d.total+' 条）';
     if(!d.data.length){tb.innerHTML='<tr><td colspan="9"><div class="empty">暂无记录</div></td></tr>';$('#consultPager').innerHTML='';return;}
     let tm={product:'产品',design:'设计',custom:'定制',other:'其他'},sm={pending:'待处理',contacted:'已联系',completed:'已完成'};
-    tb.innerHTML=d.data.map(r=>`<tr><td>#${r.id}</td><td>${e(r.name)}</td><td>${e(r.phone)}</td><td>${e(r.email||'-')}</td><td>${tm[r.consult_type]||r.consult_type||'未指定'}</td><td>${e((r.message||'').substring(0,20))}</td><td><span class="status-badge status-${r.status}">${sm[r.status]||r.status}</span></td><td style="font-size:0.75rem;">${(r.created_at||'').substring(0,16)}</td><td style="white-space:nowrap;">${r.status==='pending'?'<button class="btn btn-sm btn-info" onclick="updSt('+r.id+',\'contacted\')">📞</button> <button class="btn btn-sm btn-success" onclick="updSt('+r.id+',\'completed\')">✓</button>':r.status==='contacted'?'<button class="btn btn-sm btn-success" onclick="updSt('+r.id+',\'completed\')">✓</button> <button class="btn btn-sm btn-warn" onclick="updSt('+r.id+',\'pending\')">↩</button>':'<button class="btn btn-sm btn-warn" onclick="updSt('+r.id+',\'pending\')">↩</button>'} <button class="btn btn-sm btn-danger" onclick="confirmD('删除 #'+${r.id}+'？',()=>delCons(${r.id}))">🗑</button></td></tr>`).join('');
+    tb.innerHTML=d.data.map(r=>`<tr><td>#${r.id}</td><td>${e(r.name)}</td><td>${e(r.phone)}</td><td>${e(r.email||'-')}</td><td>${e(tm[r.consult_type]||r.consult_type||'未指定')}</td><td>${e((r.message||'').substring(0,20))}</td><td><span class="status-badge status-${r.status}">${e(sm[r.status]||r.status)}</span></td><td style="font-size:0.75rem;">${(r.created_at||'').substring(0,16)}</td><td style="white-space:nowrap;">${r.status==='pending'?'<button class="btn btn-sm btn-info" onclick="updSt('+r.id+',\'contacted\')">📞</button> <button class="btn btn-sm btn-success" onclick="updSt('+r.id+',\'completed\')">✓</button>':r.status==='contacted'?'<button class="btn btn-sm btn-success" onclick="updSt('+r.id+',\'completed\')">✓</button> <button class="btn btn-sm btn-warn" onclick="updSt('+r.id+',\'pending\')">↩</button>':'<button class="btn btn-sm btn-warn" onclick="updSt('+r.id+',\'pending\')">↩</button>'} <button class="btn btn-sm btn-danger" onclick="confirmD('删除 #'+${r.id}+'？',()=>delCons(${r.id}))">🗑</button></td></tr>`).join('');
     let tp=Math.ceil(d.total/d.limit),ph='';if(tp>1){ph+=`<button ${p<=1?'disabled':''} onclick="loadConsult(${p-1})">‹</button>`;for(let i=1;i<=tp;i++)ph+=`<button class="${i===p?'active-page':''}" onclick="loadConsult(${i})">${i}</button>`;ph+=`<button ${p>=tp?'disabled':''} onclick="loadConsult(${p+1})">›</button>`;ph+=`<span style="margin-left:10px;font-size:0.8rem;">${p}/${tp}页</span>`;}$('#consultPager').innerHTML=ph;
   }catch(e){tb.innerHTML='<tr><td colspan="9"><div class="empty">网络错误</div></td></tr>';}}
 function filterConsult(f){$$('#tab-consult .panel-actions .btn-outline').forEach(b=>b.classList.remove('active-filter'));event.target.classList.add('active-filter');loadConsult(1,f);}
-async function updSt(id,s){try{await fetch(AA+'/consultations/'+id+'/status',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:s})});showToast('已更新','success');loadConsult();loadStats();}catch(e){showToast('失败','error');}}
-async function delCons(id){try{await fetch(AA+'/consultations/'+id,{method:'DELETE'});showToast('已删除','success');loadConsult();loadStats();}catch(e){showToast('失败','error');}}
+async function updSt(id,s){try{await apiFetch(AA+'/consultations/'+id+'/status',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:s})});showToast('已更新','success');loadConsult();loadStats();}catch(e){showToast('失败','error');}}
+async function delCons(id){try{await apiFetch(AA+'/consultations/'+id,{method:'DELETE'});showToast('已删除','success');loadConsult();loadStats();}catch(e){showToast('失败','error');}}
 
 // ---- 订阅 ----
 async function loadSub(p){p=p||subPage;subPage=p;
   let tb=$('#subBody');tb.innerHTML='<tr><td colspan="4"><div class="loading">加载中...</div></td></tr>';
-  try{let r=await fetch(AA+'/subscriptions?page='+p+'&limit=15'),d=await r.json();
+  try{let d=await apiFetch(AA+'/subscriptions?page='+p+'&limit=15');
     if(!d.success||!d.data.length){tb.innerHTML='<tr><td colspan="4"><div class="empty">'+(d.data&&d.data.length===0?'暂无订阅':'加载失败')+'</div></td></tr>';$('#subPager').innerHTML='';return;}
     $('#subCount').textContent='（共 '+d.total+' 条）';
     tb.innerHTML=d.data.map(r=>`<tr><td>#${r.id}</td><td>${e(r.email)}</td><td>${(r.created_at||'').substring(0,16)}</td><td><button class="btn btn-sm btn-danger" onclick="confirmD('删除订阅？',()=>delSub(${r.id}))">🗑</button></td></tr>`).join('');
     let tp=Math.ceil(d.total/15),ph='';if(tp>1){ph+=`<button ${p<=1?'disabled':''} onclick="loadSub(${p-1})">‹</button>`;for(let i=1;i<=tp;i++)ph+=`<button class="${i===p?'active-page':''}" onclick="loadSub(${i})">${i}</button>`;ph+=`<button ${p>=tp?'disabled':''} onclick="loadSub(${p+1})">›</button>`;}$('#subPager').innerHTML=ph;
   }catch(e){tb.innerHTML='<tr><td colspan="4"><div class="empty">网络错误</div></td></tr>';}}
-async function delSub(id){try{await fetch(AA+'/subscriptions/'+id,{method:'DELETE'});showToast('已删除','success');loadSub();loadStats();}catch(e){showToast('失败','error');}}
+async function delSub(id){try{await apiFetch(AA+'/subscriptions/'+id,{method:'DELETE'});showToast('已删除','success');loadSub();loadStats();}catch(e){showToast('失败','error');}}
 
 // ---- 用户管理 ----
 async function loadUsers(p){p=p||userPage;userPage=p;
   let tb=$('#userBody');tb.innerHTML='<tr><td colspan="10"><div class="loading">加载中...</div></td></tr>';
-  try{let r=await fetch(AA+'/users?page='+p+'&limit=15'),d=await r.json();
+  try{let d=await apiFetch(AA+'/users?page='+p+'&limit=15');
     if(!d.success||!d.users.length){tb.innerHTML='<tr><td colspan="10"><div class="empty">暂无用户</div></td></tr>';return;}
     $('#userCount').textContent='（共 '+d.total+' 人）';
-    tb.innerHTML=d.users.map(u=>`<tr><td>#${u.id}</td><td><strong>${e(u.username)}</strong></td><td>${e(u.nickname||'-')}</td><td>${e(u.phone||'-')}</td><td>${e(u.email||'-')}</td><td>${u.gender||'-'}</td><td>${u.age||'-'}</td><td>${e(u.region||'-')}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${e(u.signature||'-')}</td><td style="font-size:0.75rem;">${(u.created_at||'').substring(0,10)}</td></tr>`).join('');}catch(e){tb.innerHTML='<tr><td colspan="10"><div class="empty">网络错误</div></td></tr>';}}
+    tb.innerHTML=d.users.map(u=>`<tr><td>#${u.id}</td><td><strong>${e(u.username)}</strong></td><td>${e(u.nickname||'-')}</td><td>${e(u.phone||'-')}</td><td>${e(u.email||'-')}</td><td>${e(u.gender||'-')}</td><td>${e(u.age||'-')}</td><td>${e(u.region||'-')}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;">${e(u.signature||'-')}</td><td style="font-size:0.75rem;">${(u.created_at||'').substring(0,10)}</td></tr>`).join('');}catch(e){tb.innerHTML='<tr><td colspan="10"><div class="empty">网络错误</div></td></tr>';}}
 
 // ---- 订单管理 ----
-async function loadOrders(p){p=p||orderPage;orderPage=p;
-  let tb=$('#orderBody');tb.innerHTML='<tr><td colspan="7"><div class="loading">加载中...</div></td></tr>';
-  try{let r=await fetch(AA+'/orders'),d=await r.json();
-    if(!d.success||!d.orders.length){tb.innerHTML='<tr><td colspan="7"><div class="empty">暂无订单</div></td></tr>';return;}
+async function loadOrders(p){
+  p=p||orderPage; orderPage=p;
+  let tb=$('#orderBody');
+  tb.innerHTML='<tr><td colspan="7"><div class="loading">加载中...</div></td></tr>';
+  try{
+    let d=await apiFetch(AA+'/orders');
+    if(!d.success||!d.orders.length){
+      tb.innerHTML='<tr><td colspan="7"><div class="empty">暂无订单</div></td></tr>';
+      return;
+    }
     $('#orderCount').textContent='（共 '+d.total+' 单）';
+    // 状态文案与样式映射
     let sm={pending:'⏳待确认',confirmed:'✅已确认',shipped:'🚚已发货',completed:'✔已完成'};
-    tb.innerHTML=d.orders.map(o=>{let items=typeof o.items_json==='string'?JSON.parse(o.items_json):o.items_json;return`<tr><td>#${o.id}</td><td>${e(o.username)}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">${items.map(i=>i.product_name+'×'+i.quantity).join(', ')}</td><td><strong>¥${o.total_amount}</strong></td><td><span class="status-badge status-${o.status==='pending'?'pending':o.status==='confirmed'?'contacted':'completed'}">${sm[o.status]||o.status}</span></td><td style="font-size:0.75rem;">${(o.created_at||'').substring(0,16)}</td><td>${o.xlsx_path?'<a href="'+AA+'/orders/'+o.id+'/xlsx" class="btn btn-sm btn-success">📥 下载</a>':'无文件'}</td></tr>`;}).join('');
-  }catch(e){tb.innerHTML='<tr><td colspan="7"><div class="empty">网络错误</div></td></tr>';}}
+    let sc={pending:'pending',confirmed:'contacted',shipped:'contacted',completed:'completed'};
+    tb.innerHTML=d.orders.map(o=>{
+      let items=typeof o.items_json==='string'?JSON.parse(o.items_json):o.items_json;
+      // 操作区：下载（自动确认）+ 状态推进按钮
+      let actions='';
+      if(o.xlsx_path){
+        // ★ 用按钮触发下载，下载后刷新列表以显示「已确认」
+        actions+=`<button class="btn btn-sm btn-success" onclick="downloadOrder(${o.id})">📥 下载</button> `;
+      }else{
+        actions+='<span style="color:var(--text-light);font-size:0.8rem;">无文件</span> ';
+      }
+      if(o.status==='pending'){
+        actions+=`<button class="btn btn-sm btn-info" onclick="updOrderSt(${o.id},'confirmed')">确认</button>`;
+      }else if(o.status==='confirmed'){
+        actions+=`<button class="btn btn-sm btn-info" onclick="updOrderSt(${o.id},'shipped')">发货</button>`;
+      }else if(o.status==='shipped'){
+        actions+=`<button class="btn btn-sm btn-success" onclick="updOrderSt(${o.id},'completed')">完成</button>`;
+      }
+      return `<tr>
+        <td>#${o.id}</td>
+        <td>${e(o.username)}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;">${items.map(i=>e(i.product_name)+'×'+i.quantity).join(', ')}</td>
+        <td><strong>¥${o.total_amount}</strong></td>
+        <td><span class="status-badge status-${sc[o.status]||'pending'}">${e(sm[o.status]||o.status)}</span></td>
+        <td style="font-size:0.75rem;">${(o.created_at||'').substring(0,16)}</td>
+        <td style="white-space:nowrap;">${actions}</td>
+      </tr>`;
+    }).join('');
+  }catch(err){
+    tb.innerHTML='<tr><td colspan="7"><div class="empty">网络错误</div></td></tr>';
+  }
+}
+
+/**
+ * 下载订单文件：触发浏览器下载，并在短延迟后刷新列表
+ * 后端会在下载时把 pending → confirmed，因此刷新后状态会变成「已确认」
+ */
+function downloadOrder(oid){
+  // 用隐藏 iframe / 临时 a 标签触发文件下载，避免离开当前页
+  const a=document.createElement('a');
+  a.href=AA+'/orders/'+oid+'/xlsx';
+  a.download='';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('正在下载，状态将更新为已确认…','success');
+  // 给后端一点时间完成状态写入后再刷列表
+  setTimeout(()=>{ loadOrders(); loadStats(); }, 600);
+}
+
+/** 手动推进订单状态 */
+async function updOrderSt(id,s){
+  try{
+    await apiFetch(AA+'/orders/'+id+'/status',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({status:s})
+    });
+    showToast('订单状态已更新','success');
+    loadOrders();
+    loadStats();
+  }catch(e){
+    showToast('更新失败','error');
+  }
+}
+
+// ---- 产品管理 ----
+const CAT_MAP={sofa:'沙发系列',bed:'床具系列',table:'餐桌系列',storage:'储物系列'};
+
+/** 产品列表（分页 + 分类过滤 + 关键词搜索） */
+async function loadProducts(p){
+  p=p||productPage; productPage=p;
+  let tb=$('#productBody');
+  tb.innerHTML='<tr><td colspan="12"><div class="loading">加载中...</div></td></tr>';
+  let url=AA+'/products?page='+p+'&limit=15';
+  if(productFilter) url+='&category='+productFilter;
+  if(productSearchQ) url+='&q='+encodeURIComponent(productSearchQ);
+  try{
+    let d=await apiFetch(url);
+    if(!d.success){tb.innerHTML='<tr><td colspan="12"><div class="empty">加载失败</div></td></tr>';return;}
+    $('#productCount').textContent='（共 '+d.total+' 件）';
+    if(!d.products.length){tb.innerHTML='<tr><td colspan="12"><div class="empty">暂无产品'+(productSearchQ||productFilter?'，试试清除筛选条件':'')+'</div></td></tr>';$('#productPager').innerHTML='';return;}
+    tb.innerHTML=d.products.map(pr=>{
+      let tags='';
+      if(pr.is_hot) tags+='<span class="badge-hot">🔥热销</span> ';
+      if(pr.is_new) tags+='<span class="badge-new">✨新品</span> ';
+      if(!tags) tags='<span style="color:var(--text-light);font-size:0.75rem;">—</span>';
+      let statusHtml=pr.is_active?'<span class="status-on">🟢 上架</span>':'<span class="status-off">⚪ 下架</span>';
+      let imgHtml=pr.image_url
+        ? `<img class="thumb-img" src="../${pr.image_url}" onerror="this.style.opacity=0.2" alt="">`
+        : '<span style="color:var(--text-light);font-size:0.75rem;">无图</span>';
+      let actions=`<button class="btn btn-sm btn-info" onclick="openProductModal(${pr.id})">✏️ 编辑</button> `;
+      actions+=`<button class="btn btn-sm ${pr.is_active?'btn-warn':'btn-success'}" onclick="toggleProductActive(${pr.id},${pr.is_active?0:1})">${pr.is_active?'⬇ 下架':'⬆ 上架'}</button> `;
+      actions+=`<button class="btn btn-sm btn-danger" onclick="confirmD('确定删除产品「${e(pr.name)}」？删除后前台将不再展示。',()=>delProduct(${pr.id}))">🗑</button>`;
+      return `<tr style="${pr.is_active?'':'opacity:0.55'}">
+        <td>#${pr.id}</td>
+        <td>${imgHtml}</td>
+        <td><strong>${e(pr.name)}</strong></td>
+        <td>${e(CAT_MAP[pr.category]||pr.category)}</td>
+        <td><strong style="color:var(--primary);">¥${pr.price}</strong></td>
+        <td style="color:var(--text-light);text-decoration:line-through;">${pr.original_price?'¥'+pr.original_price:'—'}</td>
+        <td>⭐ ${pr.rating}</td>
+        <td>${pr.review_count}</td>
+        <td>${tags}</td>
+        <td>${statusHtml}</td>
+        <td style="font-size:0.75rem;">${(pr.created_at||'').substring(0,10)}</td>
+        <td style="white-space:nowrap;">${actions}</td>
+      </tr>`;
+    }).join('');
+    let tp=Math.ceil(d.total/d.limit),ph='';
+    if(tp>1){
+      ph+=`<button ${p<=1?'disabled':''} onclick="loadProducts(${p-1})">‹</button>`;
+      for(let i=1;i<=tp;i++)ph+=`<button class="${i===p?'active-page':''}" onclick="loadProducts(${i})">${i}</button>`;
+      ph+=`<button ${p>=tp?'disabled':''} onclick="loadProducts(${p+1})">›</button>`;
+      ph+=`<span style="margin-left:10px;font-size:0.8rem;">${p}/${tp}页</span>`;
+    }
+    $('#productPager').innerHTML=ph;
+  }catch(e){
+    tb.innerHTML='<tr><td colspan="12"><div class="empty">网络错误</div></td></tr>';
+  }
+}
+
+function filterProduct(f){
+  $$('#tab-products .panel-actions .btn-outline').forEach(b=>b.classList.remove('active-filter'));
+  if(event&&event.target)event.target.classList.add('active-filter');
+  productFilter=f; loadProducts(1);
+}
+
+/** 搜索防抖 300ms */
+function debounceSearch(){
+  if(_searchTimer) clearTimeout(_searchTimer);
+  _searchTimer=setTimeout(()=>{
+    productSearchQ=($('#productSearch').value||'').trim();
+    loadProducts(1);
+  },300);
+}
+
+/** 打开新增/编辑弹窗 */
+async function openProductModal(pid){
+  const box=$('#productModal');
+  $('#productFormErr').style.display='none';
+  $('#pfImagePreview').style.display='none';
+  if(!pid){
+    // 新增：清空表单
+    $('#productModalTitle').textContent='新增产品';
+    $('#pfId').value=''; $('#pfName').value=''; $('#pfCategory').value='sofa';
+    $('#pfPrice').value=''; $('#pfOriginal').value=''; $('#pfRating').value='4.5';
+    $('#pfReviews').value='0'; $('#pfDesc').value=''; $('#pfImageUrl').value='';
+    $('#pfImageFile').value='';
+    $('#pfHot').checked=false; $('#pfNew').checked=false; $('#pfActive').checked=true;
+    box.classList.add('show'); box.style.display='flex';
+    return;
+  }
+  try{
+    let d=await apiFetch(AA+'/products/'+pid);
+    if(!d.success){showToast('产品不存在','error');return;}
+    let pr=d.product;
+    $('#productModalTitle').textContent='编辑产品 #'+pid;
+    $('#pfId').value=pr.id; $('#pfName').value=pr.name; $('#pfCategory').value=pr.category;
+    $('#pfPrice').value=pr.price; $('#pfOriginal').value=pr.original_price||'';
+    $('#pfRating').value=pr.rating; $('#pfReviews').value=pr.review_count;
+    $('#pfDesc').value=pr.description||''; $('#pfImageUrl').value=pr.image_url||'';
+    $('#pfImageFile').value='';
+    $('#pfHot').checked=!!pr.is_hot; $('#pfNew').checked=!!pr.is_new; $('#pfActive').checked=pr.is_active!==0;
+    if(pr.image_url){
+      const img=$('#pfImagePreview');
+      img.src='../'+pr.image_url;
+      img.style.display='block';
+    }
+    box.classList.add('show'); box.style.display='flex';
+  }catch(e){showToast('加载产品失败','error');}
+}
+
+function closeProductModal(){
+  const box=$('#productModal');
+  box.classList.remove('show'); box.style.display='none';
+}
+
+/** 图片上传 → 回填 URL 并预览 */
+async function uploadProductImage(input){
+  const f=input.files&&input.files[0];
+  if(!f) return;
+  const fd=new FormData();
+  fd.append('file',f);
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),15000);
+  try{
+    const r=await fetch(AA+'/upload',{method:'POST',body:fd,signal:ctrl.signal});
+    const d=await r.json();
+    if(d.success){
+      $('#pfImageUrl').value=d.url;
+      const img=$('#pfImagePreview');
+      img.src='../'+d.url;
+      img.style.display='block';
+      showToast('图片上传成功','success');
+    }else{
+      showToast(d.message||'上传失败','error');
+    }
+  }catch(e){showToast('上传失败（网络错误或文件过大）','error');}
+  finally{clearTimeout(timer);}
+}
+
+/** 新增/编辑保存 */
+async function saveProduct(){
+  const id=$('#pfId').value;
+  const name=($('#pfName').value||'').trim();
+  const category=$('#pfCategory').value;
+  const price=$('#pfPrice').value;
+  const original=$('#pfOriginal').value;
+  const rating=$('#pfRating').value;
+  const reviews=$('#pfReviews').value;
+  const desc=($('#pfDesc').value||'').trim();
+  const imageUrl=($('#pfImageUrl').value||'').trim();
+  const err=$('#productFormErr');
+  if(!name){err.textContent='请填写产品名称';err.style.display='block';return;}
+  if(!price||parseFloat(price)<=0){err.textContent='请填写正确的价格（大于 0）';err.style.display='block';return;}
+  if(!rating||parseFloat(rating)<0||parseFloat(rating)>5){err.textContent='评分必须在 0~5 之间';err.style.display='block';return;}
+  err.style.display='none';
+  const body={
+    name, category,
+    price:parseFloat(price),
+    original_price:original?parseFloat(original):null,
+    rating:parseFloat(rating),
+    review_count:parseInt(reviews||0),
+    description:desc,
+    image_url:imageUrl,
+    is_hot:$('#pfHot').checked?1:0,
+    is_new:$('#pfNew').checked?1:0,
+    is_active:$('#pfActive').checked?1:0,
+  };
+  try{
+    let d=id
+      ? await apiFetch(AA+'/products/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      : await apiFetch(AA+'/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(d.success){
+      closeProductModal();
+      showToast(id?'产品已更新':'产品已新增','success');
+      loadProducts(); loadStats();
+    }else{
+      err.textContent=d.message||'保存失败';err.style.display='block';
+    }
+  }catch(e){showToast('保存失败','error');}
+}
+
+/** 上架/下架切换 */
+async function toggleProductActive(pid,active){
+  try{
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),12000);
+    const r=await fetch(AA+'/products/'+pid,{
+      method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({is_active:active}),signal:ctrl.signal
+    });
+    clearTimeout(timer);
+    const d=await r.json();
+    if(d.success){
+      showToast(active?'产品已上架':'产品已下架','success');
+      loadProducts(); loadStats();
+    }else{
+      showToast(d.message||'操作失败','error');
+    }
+  }catch(e){showToast('操作失败','error');}
+}
+
+/** 删除产品 */
+async function delProduct(pid){
+  try{
+    await apiFetch(AA+'/products/'+pid,{method:'DELETE'});
+    showToast('产品已删除','success');
+    loadProducts(); loadStats();
+  }catch(e){showToast('删除失败','error');}
+}
 
 function e(s){let d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function refreshAll(){loadStats();if(currentTab==='consult')loadConsult();else if(currentTab==='subscription')loadSub();else if(currentTab==='users')loadUsers();else loadOrders();chk();}
 
-document.addEventListener('DOMContentLoaded',()=>{chk();loadStats();loadConsult();setInterval(loadStats,30000);});
+/** 防抖刷新：取消旧请求，避免连点/狂刷把后端打挂 */
+function refreshAll(){
+  if(_refreshTimer) clearTimeout(_refreshTimer);
+  _refreshTimer=setTimeout(async ()=>{
+    if(_refreshBusy) return;
+    _refreshBusy=true;
+    abortAll();
+    // ★ BUG修复：原来 querySelector('.topbar .links button') 会选中「退出」按钮，
+    //   导致刷新时禁用/改写退出按钮；改用专属 id
+    const btn=document.getElementById('refreshBtn');
+    if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> 刷新中';}
+    try{
+      await chk();
+      await loadStats();
+      if(currentTab==='consult') await loadConsult();
+      else if(currentTab==='subscription') await loadSub();
+      else if(currentTab==='users') await loadUsers();
+      else if(currentTab==='orders') await loadOrders();
+      else await loadProducts();
+    }finally{
+      _refreshBusy=false;
+      if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-sync-alt"></i> 刷新';}
+    }
+  },250);
+}
+
+document.addEventListener('DOMContentLoaded',async ()=>{
+  // ★ 先检查登录状态：未登录弹登录框，已登录才加载数据
+  try{
+    const d=await apiFetch(AA+'/check',{noAuthRedirect:true});
+    if(d.success){
+      hideLogin();
+      chk();loadStats();loadConsult();
+    }else{
+      showLogin();
+    }
+  }catch(e){
+    showLogin();
+  }
+  setInterval(()=>{if(!_refreshBusy)loadStats().catch(()=>scheduleReconnect());},60000);
+});
 </script>
 </body>
 </html>

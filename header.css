@@ -169,7 +169,10 @@
         display: block;
     }
 
-    .contact-info .contact-item {
+    /* ★ BUG修复：原选择器 .contact-info .contact-item 会误伤「联系我们」区域的联系信息
+       （该区域同样使用 .contact-info/.contact-item 类名），导致手机端联系信息条目全部被隐藏。
+       限定在 .header-top 内，只隐藏头部电话/邮箱。 */
+    .header-top .contact-info .contact-item {
         display: none;
     }
 

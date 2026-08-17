@@ -74,6 +74,26 @@ body { font-family: 'Noto Sans SC','Microsoft YaHei',sans-serif; background: var
 .st-completed { background: #E8F5E9; color: #2E7D32; }
 .empty { text-align: center; padding: 60px 20px; color: var(--text-light); }
 .empty i { font-size: 3rem; margin-bottom: 16px; display: block; color: #ccc; }
+
+/* 浏览历史 */
+.history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+.history-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #fff; transition: all 0.25s; display: flex; flex-direction: column; }
+.history-card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.history-card .h-img { height: 130px; background: #FAF7F2; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.history-card .h-img img { width: 100%; height: 100%; object-fit: contain; }
+.history-card .h-info { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.history-card .h-name { font-size: 0.92rem; font-weight: 600; color: var(--dark); cursor: pointer; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.6em; }
+.history-card .h-name:hover { color: var(--primary); }
+.history-card .h-price { color: var(--danger); font-weight: 700; font-size: 1rem; }
+.history-card .h-time { font-size: 0.75rem; color: var(--text-light); }
+.history-card .h-actions { display: flex; gap: 8px; padding: 0 14px 12px; }
+.history-card .h-del { flex: 1; padding: 6px 0; border: 1px solid var(--border); border-radius: 6px; background: #fff; color: var(--text-light); font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+.history-card .h-del:hover { border-color: var(--danger); color: var(--danger); }
+.history-card .h-off { color: var(--text-light); font-size: 0.78rem; background: #F5F5F5; padding: 2px 8px; border-radius: 4px; align-self: flex-start; }
+.history-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+.history-toolbar .h-count { color: var(--text-light); font-size: 0.85rem; }
+.history-clear { padding: 8px 18px; border: 1px solid var(--border); border-radius: 20px; background: #fff; color: var(--text-light); font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+.history-clear:hover { border-color: var(--danger); color: var(--danger); }
 .toast { position: fixed; top: 20px; right: 20px; background: var(--dark); color: white; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; z-index: 9999; display: none; }
 .toast.show { display: block; }
 
@@ -105,9 +125,10 @@ body { font-family: 'Noto Sans SC','Microsoft YaHei',sans-serif; background: var
       <p id="sidebarSig"></p>
     </div>
     <nav class="sidebar-nav">
-      <a href="#" class="active" onclick="switchSection('profile')"><i class="fas fa-user-edit"></i> 个人信息</a>
-      <a href="#" onclick="switchSection('orders')"><i class="fas fa-clipboard-list"></i> 我的订单</a>
-      <a href="#" onclick="switchSection('security')"><i class="fas fa-shield-alt"></i> 账户安全</a>
+      <a href="#" class="active" onclick="switchSection('profile', this)"><i class="fas fa-user-edit"></i> 个人信息</a>
+      <a href="#" onclick="switchSection('orders', this)"><i class="fas fa-clipboard-list"></i> 我的订单</a>
+      <a href="#" onclick="switchSection('history', this)"><i class="fas fa-history"></i> 浏览历史</a>
+      <a href="#" onclick="switchSection('security', this)"><i class="fas fa-shield-alt"></i> 账户安全</a>
       <a href="/cart.html"><i class="fas fa-shopping-cart"></i> 购物车</a>
     </nav>
   </aside>
@@ -119,12 +140,25 @@ body { font-family: 'Noto Sans SC','Microsoft YaHei',sans-serif; background: var
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:5000/api';
-let currentUser = JSON.parse(localStorage.getItem('yatan_user') || 'null');
+// ★ 同源 API：由 Flask 托管时自动适配
+const API = (location.origin.includes('localhost') || location.origin.includes('127.0.0.1') || location.port === '5000')
+  ? (location.origin + '/api') : '/api';
+let currentUser = null;
+// ★ BUG修复：localStorage 数据损坏会导致整页崩溃白屏
+try { currentUser = JSON.parse(localStorage.getItem('yatan_user') || 'null'); } catch(e) { currentUser = null; }
 if (!currentUser) { location.href = '/index.html'; }
 
 function $(s){return document.querySelector(s);}
 function showToast(m){let t=$('#toast');t.textContent=m;t.className='toast show';setTimeout(()=>t.classList.remove('show'),2000);}
+// ★ 图片加载失败兜底占位（纯 data URI，不依赖外部资源）
+const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">' +
+  '<rect width="100%" height="100%" fill="#F5EFE6"/>' +
+  '<text x="50%" y="50%" fill="#B8A88F" font-size="16" text-anchor="middle" dominant-baseline="middle">图片加载失败</text></svg>');
+// ★ BUG修复：所有插入 innerHTML 的动态值统一转义，防存储型 XSS
+function escapeHtml(s) {
+  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
 function updateSidebar() {
   let av = currentUser.avatar ? `<img src="${currentUser.avatar}" class="avatar" onerror="this.style.display='none'">` 
@@ -134,11 +168,12 @@ function updateSidebar() {
   $('#sidebarSig').textContent = currentUser.signature || '还没有签名~';
 }
 
-function switchSection(s) {
+function switchSection(s, el) {
   document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
-  event.target.classList.add('active');
+  if (el) el.classList.add('active');
   if (s==='profile') renderProfile();
   else if (s==='orders') renderOrders();
+  else if (s==='history') renderHistory();
   else if (s==='security') renderSecurity();
 }
 
@@ -151,14 +186,14 @@ async function renderProfile() {
     $('#contentArea').innerHTML = `
       <h2><i class="fas fa-user-edit" style="color:var(--primary);"></i> 个人信息</h2>
       <div class="form-grid">
-        <div class="form-group"><label>头像URL</label><input id="pfAvatar" value="${u.avatar||''}" placeholder="输入头像图片链接"></div>
-        <div class="form-group"><label>昵称</label><input id="pfNick" value="${u.nickname||''}"></div>
+        <div class="form-group"><label>头像URL</label><input id="pfAvatar" value="${escapeHtml(u.avatar||'')}" placeholder="输入头像图片链接"></div>
+        <div class="form-group"><label>昵称</label><input id="pfNick" value="${escapeHtml(u.nickname||'')}"></div>
         <div class="form-group"><label>性别</label><select id="pfGender"><option value="" ${!u.gender?'selected':''}>保密</option><option value="男" ${u.gender==='男'?'selected':''}>男</option><option value="女" ${u.gender==='女'?'selected':''}>女</option></select></div>
-        <div class="form-group"><label>年龄</label><input id="pfAge" type="number" value="${u.age||''}" min="0" max="150"></div>
-        <div class="form-group"><label>手机号</label><input id="pfPhone" value="${u.phone||''}"></div>
-        <div class="form-group"><label>邮箱</label><input id="pfEmail" value="${u.email||''}"></div>
-        <div class="form-group"><label>地区</label><input id="pfRegion" value="${u.region||''}" placeholder="如：南宁"></div>
-        <div class="form-group full"><label>个性签名</label><input id="pfSig" value="${u.signature||''}" placeholder="写一句个性签名..."></div>
+        <div class="form-group"><label>年龄</label><input id="pfAge" type="number" value="${escapeHtml(u.age||'')}" min="0" max="150"></div>
+        <div class="form-group"><label>手机号</label><input id="pfPhone" value="${escapeHtml(u.phone||'')}"></div>
+        <div class="form-group"><label>邮箱</label><input id="pfEmail" value="${escapeHtml(u.email||'')}"></div>
+        <div class="form-group"><label>地区</label><input id="pfRegion" value="${escapeHtml(u.region||'')}" placeholder="如：南宁"></div>
+        <div class="form-group full"><label>个性签名</label><input id="pfSig" value="${escapeHtml(u.signature||'')}" placeholder="写一句个性签名..."></div>
       </div>
       <div style="display:flex;gap:12px;margin-top:24px;">
         <button class="btn btn-primary" onclick="saveProfile()"><i class="fas fa-save"></i> 保存修改</button>
@@ -189,22 +224,98 @@ async function renderOrders() {
   try {
     let r = await fetch(API + '/orders?user_id=' + currentUser.id);
     let d = await r.json();
-    if (!d.orders.length) {
+    // ★ BUG修复：接口异常返回（如 401）时 d.orders 可能为 undefined，直接 .length 会崩溃
+    if (!d || !d.orders || !d.orders.length) {
       $('#contentArea').innerHTML = '<h2><i class="fas fa-clipboard-list" style="color:var(--primary);"></i> 我的订单</h2><div class="empty"><i class="fas fa-inbox"></i>暂无订单<p style="margin-top:12px;"><a href="/index.html#products" style="color:var(--primary);">去逛逛</a></p></div>';
       return;
     }
     let sm = {pending:'⏳待确认', confirmed:'✅已确认', shipped:'🚚已发货', completed:'✔已完成'};
     let html = '<h2><i class="fas fa-clipboard-list" style="color:var(--primary);"></i> 我的订单</h2>';
     d.orders.forEach(o => {
-      let items = typeof o.items_json==='string' ? JSON.parse(o.items_json) : o.items_json;
+      // ★ BUG修复：items_json 可能为 null/损坏，JSON.parse 包 try 并降级显示
+      let items = [];
+      try { items = typeof o.items_json==='string' ? JSON.parse(o.items_json) : (o.items_json||[]); } catch(e) { items = []; }
       html += `<div class="order-card">
-        <div class="order-header"><span>订单号：#${o.id}</span><span>${(o.created_at||'').substring(0,16)}</span></div>
-        <div class="order-body"><div class="order-items">${items.map(i=>`<div class="order-item">${i.product_name} ×${i.quantity}</div>`).join('')}</div></div>
-        <div class="order-footer"><span class="status-tag ${o.status==='pending'?'st-pending':'st-completed'}">${sm[o.status]||o.status}</span><span class="order-total">合计：¥${o.total_amount.toLocaleString()}</span></div>
+        <div class="order-header"><span>订单号：#${escapeHtml(o.id)}</span><span>${escapeHtml((o.created_at||'').substring(0,16))}</span></div>
+        <div class="order-body"><div class="order-items">${items.map(i=>`<div class="order-item">${escapeHtml(i.product_name)} ×${i.quantity}</div>`).join('')||'<div class="order-item">（订单数据异常）</div>'}</div></div>
+        <div class="order-footer"><span class="status-tag ${o.status==='pending'?'st-pending':'st-completed'}">${escapeHtml(sm[o.status]||o.status)}</span><span class="order-total">合计：¥${Number(o.total_amount).toLocaleString()}</span></div>
       </div>`;
     });
     $('#contentArea').innerHTML = html;
   } catch(e) { $('#contentArea').innerHTML = '<h2>我的订单</h2><div class="empty">加载失败</div>'; }
+}
+
+// ====== 浏览历史（纯前端 localStorage：零网络请求、即时渲染）======
+const HISTORY_KEY = 'yatan_history';
+
+/** 读取本地浏览历史 */
+function getHistoryList() {
+  try {
+    let list = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    return Array.isArray(list) ? list : [];
+  } catch (e) { return []; }
+}
+
+function renderHistory() {
+  const list = getHistoryList();
+  if (!list.length) {
+    $('#contentArea').innerHTML = '<h2><i class="fas fa-history" style="color:var(--primary);"></i> 浏览历史</h2><div class="empty"><i class="fas fa-eye-slash"></i>暂无浏览记录<p style="margin-top:12px;"><a href="/index.html#products" style="color:var(--primary);">去逛逛</a></p></div>';
+    return;
+  }
+  let html = '<h2><i class="fas fa-history" style="color:var(--primary);"></i> 浏览历史</h2>';
+  html += `<div class="history-toolbar"><span class="h-count">共 ${list.length} 条浏览记录</span><button class="history-clear" onclick="clearHistory()"><i class="fas fa-trash-alt"></i> 清空全部</button></div>`;
+  html += '<div class="history-grid">';
+  list.forEach(h => {
+    // 存的是浏览时快照：商品下架/删除后历史仍可查看；绝对路径 + 失败兜底占位
+    const img = h.image ? `<img src="${escapeHtml(h.image)}" alt="${escapeHtml(h.name)}" loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG">` : '';
+    html += `<div class="history-card">
+      <div class="h-img" onclick="goProduct(${h.id})">${img}</div>
+      <div class="h-info">
+        <div class="h-name" onclick="goProduct(${h.id})">${escapeHtml(h.name)}</div>
+        <div class="h-price">¥${Number(h.price).toLocaleString()}</div>
+        <div class="h-time">${escapeHtml(fmtTime(h.time))}</div>
+      </div>
+      <div class="h-actions"><button class="h-del" onclick="deleteHistory(${h.id}, this)"><i class="fas fa-trash-alt"></i> 删除</button></div>
+    </div>`;
+  });
+  html += '</div>';
+  $('#contentArea').innerHTML = html;
+}
+
+/** 浏览时间友好显示（本地时间，秒级即时格式化） */
+function fmtTime(t) {
+  if (!t) return '';
+  const d = new Date(t);
+  if (isNaN(d.getTime())) return '';
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+/** 从浏览历史跳回首页产品区 */
+function goProduct(pid) {
+  // 跳回首页产品区（首页渲染后自动定位到该产品详情）
+  location.href = '/index.html#product-' + pid;
+}
+
+/** 删除单条浏览记录（本地同步操作，即时生效） */
+function deleteHistory(pid, btn) {
+  if (btn) btn.disabled = true;
+  try {
+    const list = getHistoryList().filter(h => h.id !== pid);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+    showToast('✅ 已删除');
+  } catch (e) { showToast('❌ 删除失败'); }
+  renderHistory();
+}
+
+/** 清空全部浏览记录（本地同步操作，即时生效） */
+function clearHistory() {
+  if (!confirm('确定清空全部浏览记录吗？')) return;
+  try {
+    localStorage.removeItem(HISTORY_KEY);
+    showToast('✅ 已清空');
+  } catch (e) { showToast('❌ 清空失败'); }
+  renderHistory();
 }
 
 function renderSecurity() {
