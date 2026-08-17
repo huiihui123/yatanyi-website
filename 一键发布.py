@@ -186,4 +186,11 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    finally:
+        # 无论成功/失败都停住窗口，防止双击后一闪而过看不到结果
+        try:
+            input('\n按回车键关闭窗口...')
+        except (EOFError, KeyboardInterrupt):
+            pass
