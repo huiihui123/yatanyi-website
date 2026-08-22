@@ -488,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
       let u = userInp.value.trim(), p = passInp.value.trim();
       if (!u||!p) { errDiv.textContent='请填写用户名和密码'; errDiv.style.display='block'; return; }
       if (mode==='register') {
-        if (p.length<6) { errDiv.textContent='密码至少6位'; errDiv.style.display='block'; return; }
+        if (p.length<8) { errDiv.textContent='密码至少是8位的字母数字组合'; errDiv.style.display='block'; return; }
         if (!/[a-zA-Z]/.test(p) || !/\d/.test(p)) { errDiv.textContent='密码必须包含字母和数字的组合'; errDiv.style.display='block'; return; }
       }
       try {
@@ -534,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.textContent==='退出') { 
           // ★ 安全加固：退出登录同时清除服务端会话
           fetchAPI('/auth/logout', {method:'POST'}).catch(()=>{});
-          currentUser=null; localStorage.removeItem('yatan_user'); updateUserUI(); alert('已退出'); 
+          currentUser=null; localStorage.removeItem('yatan_user'); updateUserUI(); alert('您已退出登陆!'); 
         }
         else location.href = '/profile.html';
       };
@@ -572,7 +572,7 @@ document.addEventListener('DOMContentLoaded', function() {
       let html = `<div style="padding:24px;">
         <h2 style="color:#3E2723;margin-bottom:20px;text-align:center;">🛒 我的购物车</h2>`;
       if (items.length===0) {
-        html += `<p style="text-align:center;color:#999;padding:40px 0;">购物车是空的<br>快去挑选心仪的家具吧~</p>`;
+        html += `<p style="text-align:center;color:#999;padding:40px 0;">购物车是空的<br>快去挑选心仪的家具吧~♥♥♥</p>`;
       } else {
         items.forEach(item => {
           html += `<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #EFEBE9;align-items:center;">
@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
     showConfirmDialog({
       icon: '💳',
       title: '您是否将确认前往购买？',
-      message: '确认后将为您生成订单，并通过微信扫码联系客服完成付款。',
+      message: '确认后将为您生成订单，并为您安排专属客服完成此次交易。',
       confirmText: '确认购买',
       cancelText: '取消',
       onConfirm: async function() {
@@ -958,7 +958,7 @@ document.addEventListener('DOMContentLoaded', function() {
     catch(e) { alert('网络错误'); }
   });
 
-  // 微信二维码弹窗（联系区域）
+  // 微信二维码弹窗（联系我们区域）
   (function(){
     let wb=$('#wechatBtn'), wm=$('#wechatModal'), cb=$('.close-modal');
     if(wb&&wm){ wb.onclick=()=>wm.classList.add('show'); wm.onclick=e=>{if(e.target===wm)wm.classList.remove('show');}; if(cb)cb.onclick=()=>wm.classList.remove('show'); }
